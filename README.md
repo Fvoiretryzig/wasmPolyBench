@@ -1,0 +1,7 @@
+# wasm-polyBench
+
+
+
+cmake .
+
+make
