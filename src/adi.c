@@ -6,8 +6,6 @@
 #include <math.h>
 #include <stdlib.h>
 
-#define POLYBENCH_TIME 1
-
 #include "polybenchUtilFuncts.h"
 #include "polybench.h"
 #include "cuda-helper.h"
@@ -745,7 +743,7 @@ void compareResults(int n, DATA_TYPE POLYBENCH_2D(B_cpu, N, N, n, n), DATA_TYPE 
     printf("Non-Matching CPU-GPU Outputs Beyond Error Threshold of %4.2f Percent: %d\n", PERCENT_DIFF_ERROR_THRESHOLD, fail);
 }
 
-int main(int argc, char *argv[]) {
+int main() {
 	int tsteps = TSTEPS;
 	int n = N;
 
