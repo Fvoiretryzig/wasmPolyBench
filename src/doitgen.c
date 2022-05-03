@@ -229,20 +229,20 @@ void doitgenCuda(CUdevice device, DATA_TYPE* A, DATA_TYPE* C4, DATA_TYPE* sum, D
     cuError(cuModuleGetFunction(&func, module, "_Z15doitgen_kernel1PfS_S_i"));
     printf("  Load function from module Success\n");
     for (int r=0; r<NR; r++) {
-        printf("  Launching doitgen_kernel1 %d kernel function ...\n", r);
+        //printf("  Launching doitgen_kernel1 %d kernel function ...\n", r);
         void *args[] = {&sumGpu, &AGpu, &C4Gpu, &r, NULL};
 		cuError(cuLaunchKernel(func, grid_x, grid_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args, NULL));
-        printf("  Launch doitgen_kernel1 %d kernel function Success\n", r);
+        //printf("  Launch doitgen_kernel1 %d kernel function Success\n", r);
     }
     //doitgen_kernel2
     printf("  Loading function from module ...\n");
     cuError(cuModuleGetFunction(&func, module, "_Z15doitgen_kernel2PfS_S_i"));
     printf("  Load function from module Success\n");
     for (int r=0; r<NR; r++) {
-        printf("  Launching doitgen_kernel1 %d kernel function ...\n", r);
+        //printf("  Launching doitgen_kernel2 %d kernel function ...\n", r);
 		void *args[] = {&sumGpu, &AGpu, &C4Gpu, &r, NULL};
         cuError(cuLaunchKernel(func, grid_x, grid_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args, NULL));
-        printf("  Launch doitgen_kernel1 %d kernel function Success\n", r);
+        //printf("  Launch doitgen_kernel2 %d kernel function Success\n", r);
     }
 	
 	//cudaMemcpy(sum_outputFromGpu, sumGpu, NR * NQ * NP * sizeof(DATA_TYPE), cudaMemcpyDeviceToHost);
@@ -313,7 +313,7 @@ int main() {
         SET_TIME(GPU_START);
 	    doitgenCuda(device, A, C4, sum, sum_outputFromGpu);
         SET_TIME(GPU_END);
-        fprintf(stdout, "GPU Runtime: %0.6lfs\n", GET_DURING(GPU_END, GPU_START));
+        fprintf(stdout, "GPU Runtime: %0.6lfms\n", GET_DURING(GPU_END, GPU_START));
 
         printf("Test doitgen on GPU device %d Success\n", i);
     }
@@ -321,7 +321,7 @@ int main() {
 	SET_TIME(CPU_START);
 	doitgenCPU(sum, A, C4);
     SET_TIME(CPU_END);
-	fprintf(stdout, "CPU Runtime: %0.6lfs\n", GET_DURING(CPU_END, CPU_START));
+	fprintf(stdout, "CPU Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
 	
 	compareResults(sum, sum_outputFromGpu);
 
