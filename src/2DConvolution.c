@@ -6,10 +6,12 @@
 #include <stdarg.h>
 #include <string.h>
 #include <cuda.h>
+#include <math.h>
 
 #include "2DConvolution.h"
 #include "polybench.h"
 #include "polybenchUtilFuncts.h"
+#include "cuda-helper.h"
 
 // define the error threshold for the results "not matching"
 #define PERCENT_DIFF_ERROR_THRESHOLD 0.05
@@ -112,7 +114,7 @@ static const char *KERNEL_PTX = ".version 6.5\n"
                                 ""
                                 "BB0_2:\n"
                                 "	ret;\n"
-                                "}\n"
+                                "}\n";
 
 void conv2D(int ni, int nj, DATA_TYPE POLYBENCH_2D(A, NI, NJ, ni, nj), DATA_TYPE POLYBENCH_2D(B, NI, NJ, ni, nj))
 {
@@ -169,8 +171,7 @@ void compareResults(int ni, int nj, DATA_TYPE POLYBENCH_2D(B, NI, NJ, ni, nj), D
     printf("Non-Matching CPU-GPU Outputs Beyond Error Threshold of %4.2f Percent: %d\n", PERCENT_DIFF_ERROR_THRESHOLD, fail);
 }
 
-void convolution2DCuda(CUdevice device, int ni, int nj, DATA_TYPE POLYBENCH_2D(A, NI, NJ, ni, nj), DATA_TYPE POLYBENCH_2D(B, NI, NJ, ni, nj), 
-			DATA_TYPE POLYBENCH_2D(B_outputFromGpu, NI, NJ, ni, nj))
+void convolution2DCuda(CUdevice device, int ni, int nj, DATA_TYPE POLYBENCH_2D(A, NI, NJ, ni, nj),  DATA_TYPE POLYBENCH_2D(B_outputFromGpu, NI, NJ, ni, nj))
 {
     CUdeviceptr A_gpu, B_gpu;
 
@@ -186,12 +187,12 @@ void convolution2DCuda(CUdevice device, int ni, int nj, DATA_TYPE POLYBENCH_2D(A
     cuError(cuModuleLoadData(&module, KERNEL_PTX));
     cuError(cuModuleGetFunction(&func1, module, "_Z20convolution2D_kerneliiPfS_"));
 
-    unsigned grid_x = (size_t)ceil( ((float)NI) / ((float)block.x) );
-    unsigned grid_y = (size_t)ceil( ((float)NJ) / ((float)block.y) );
+    unsigned grid_x = (size_t)ceil( ((float)NI) / ((float)DIM_THREAD_BLOCK_X) );
+    unsigned grid_y = (size_t)ceil( ((float)NJ) / ((float)DIM_THREAD_BLOCK_Y) );
     void *args1[] = {&ni, &nj, &A_gpu, &B_gpu, NULL};
-    SET_TIME(START)
+    SET_TIME(START);
     cuError(cuLaunchKernel(func1, grid_x, grid_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
-    SET_TIME(END)
+    SET_TIME(END);
 
     cuError(cuMemcpyDtoH(B_outputFromGpu, B_gpu, sizeof(DATA_TYPE) * NI * NJ));
 	
