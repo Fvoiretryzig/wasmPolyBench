@@ -346,7 +346,7 @@ static const char *KERNEL_PTX = ".version 6.5\n"
                                 ""
                                 "BB1_11:\n"
                                 "	ret;\n"
-                                "}"
+                                "}";
 
 void init_array(int ni, int nj, int nk, int nl, DATA_TYPE *alpha, DATA_TYPE *beta, DATA_TYPE POLYBENCH_2D(A, NI, NK, ni, nk), 
 		DATA_TYPE POLYBENCH_2D(B, NK, NJ, nk, nj), DATA_TYPE POLYBENCH_2D(C, NL, NJ, nl, nj), 

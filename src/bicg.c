@@ -294,7 +294,7 @@ static const char *KERNEL_PTX = ".version 6.5\n"
                                 ""
                                 "BB1_11:\n"
                                 "	ret;\n"
-                                "}\n"
+                                "}\n";
 
 void init_array(int nx, int ny, DATA_TYPE POLYBENCH_2D(A,NX,NY,nx,ny), DATA_TYPE POLYBENCH_1D(p,NY,ny), DATA_TYPE POLYBENCH_1D(r,NX,nx))
 {
@@ -398,7 +398,7 @@ void bicgCuda(CUdevice device, int nx, int ny, DATA_TYPE POLYBENCH_2D(A,NX,NY,nx
     void *args1[] = {&nx, &ny, &A_gpu, &p_gpu, &q_gpu};
     SET_TIME(START)
     cuError(cuLaunchKernel(func1, grid1_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
-    cuError(cuLaunchKernel(func1, grid2_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args2, NULL));
+    cuError(cuLaunchKernel(func2, grid2_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args2, NULL));
     SET_TIME(END)
     fprintf(stdout, "GPU  actual Runtime: %0.6lfms\n", GET_DURING(END, START));
 	
