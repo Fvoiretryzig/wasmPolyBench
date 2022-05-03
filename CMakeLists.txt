@@ -24,5 +24,10 @@ add_compile_options(-fno-exceptions -O3 -Wextra -Werror)
 add_link_options(-Wl,--allow-undefined,--export=main,--strip-all,--no-entry)
 
 
-add_executable(doitgen.wasm src/doitgen.c)
+add_executable(2DConvolution.wasm src/2DConvolution.c)
+add_executable(2mm.wasm src/2mm.c)
 add_executable(adi.wasm src/adi.c)
+add_executable(bicg.wasm src/bicg.c)
+add_executable(doitgen.wasm src/doitgen.c)
+
+

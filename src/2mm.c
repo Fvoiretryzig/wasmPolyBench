@@ -479,7 +479,7 @@ void mm2Cuda(CUdevice device, int ni, int nj, int nk, int nl, DATA_TYPE alpha, D
     void *args2[] = {&ni, &nj, &nk, &nl, &alpha, &beta, &tmp_gpu, &C_gpu, &D_gpu};
     SET_TIME(START)
     cuError(cuLaunchKernel(func1, grid1_x, grid1_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
-	cuError(cuLaunchKernel(func1, grid2_x, grid2_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args2, NULL));
+	cuError(cuLaunchKernel(func2, grid2_x, grid2_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args2, NULL));
     SET_TIME(END)
     fprintf(stdout, "GPU  actual Runtime: %0.6lfms\n", GET_DURING(END, START));
 

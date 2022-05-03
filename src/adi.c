@@ -773,9 +773,9 @@ int main() {
         cuError(cuDeviceGetName(name, GPU_DEVICE_NAME_SIZE, device));
         fprintf(stdout, "  GPU device name is: '%s'\n", name);
 
-        SET_TIME(GPU_START);
+        SET_TIME(GPU_START)
 	    adiCuda(device, tsteps, n, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X_outputFromGpu));
-        SET_TIME(GPU_END);
+        SET_TIME(GPU_END)
         fprintf(stdout, "GPU  total Runtime: %0.6lfms\n", GET_DURING(GPU_END, GPU_START));
         fprintf(stdout, "Test adi on GPU device %d Success\n", i);
     }
