@@ -166,7 +166,7 @@ extern const unsigned int polybench_papi_eventlist[];
 
 
 /* Timing support. */
-# if defined(POLYBENCH_TIME) || defined(POLYBENCH_GFLOPS)
+/*# if defined(POLYBENCH_TIME) || defined(POLYBENCH_GFLOPS)
 #  undef polybench_start_instruments
 #  undef polybench_stop_instruments
 #  undef polybench_print_instruments
@@ -177,7 +177,7 @@ extern double polybench_program_total_flops;
 extern void polybench_timer_start();
 extern void polybench_timer_stop();
 extern void polybench_timer_print();
-# endif
+# endif*/
 
 /* Function declaration. */
 # ifdef POLYBENCH_TIME

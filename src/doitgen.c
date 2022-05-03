@@ -231,8 +231,8 @@ void doitgenCuda(CUdevice device, DATA_TYPE* A, DATA_TYPE* C4, DATA_TYPE* sum, D
     SET_TIME(START)
     for (int r=0; r<NR; r++) {
         void *args[] = {&sumGpu, &AGpu, &C4Gpu, &r, NULL};
-		cuError(cuLaunchKernel(func, grid_x, grid_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args, NULL));
-        cuError(cuLaunchKernel(func, grid_x, grid_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args, NULL));
+		cuError(cuLaunchKernel(func1, grid_x, grid_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args, NULL));
+        cuError(cuLaunchKernel(func2, grid_x, grid_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args, NULL));
     }
 	SET_TIME(END)
     fprintf(stdout, "GPU actual Runtime: %0.6lfms\n", GET_DURING(END, START));

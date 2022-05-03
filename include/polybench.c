@@ -12,7 +12,6 @@
 #include <assert.h>
 #include <time.h>
 #include <sys/time.h>
-#include <sys/resource.h>
 #include <sched.h>
 #include <math.h>
 #ifdef _OPENMP
@@ -46,26 +45,6 @@ double polybench_program_total_flops = 0;
 
 #endif
 
-
-/* Timer code (gettimeofday). */
-double polybench_t_start, polybench_t_end;
-/* Timer code (RDTSC). */
-unsigned long long int polybench_c_start, polybench_c_end;
-
-static
-double rtclock()
-{
-#ifdef POLYBENCH_TIME
-    struct timeval Tp;
-    int stat;
-    stat = gettimeofday (&Tp, NULL);
-    if (stat != 0)
-      printf ("Error return from gettimeofday: %d", stat);
-    return (Tp.tv_sec + Tp.tv_usec * 1.0e-6);
-#else
-    return 0;
-#endif
-}
 
 
 #ifdef POLYBENCH_CYCLE_ACCURATE_TIMER
@@ -317,63 +296,6 @@ void polybench_papi_print()
 
 #endif
 /* ! POLYBENCH_PAPI */
-
-void polybench_prepare_instruments()
-{
-#ifndef POLYBENCH_NO_FLUSH_CACHE
-  polybench_flush_cache ();
-#endif
-#ifdef POLYBENCH_LINUX_FIFO_SCHEDULER
-  polybench_linux_fifo_scheduler ();
-#endif
-}
-
-
-void polybench_timer_start()
-{
-  polybench_prepare_instruments ();
-#ifndef POLYBENCH_CYCLE_ACCURATE_TIMER
-  polybench_t_start = rtclock ();
-#else
-  polybench_c_start = rdtsc ();
-#endif
-}
-
-
-void polybench_timer_stop()
-{
-#ifndef POLYBENCH_CYCLE_ACCURATE_TIMER
-  polybench_t_end = rtclock ();
-#else
-  polybench_c_end = rdtsc ();
-#endif
-#ifdef POLYBENCH_LINUX_FIFO_SCHEDULER
-  polybench_linux_standard_scheduler ();
-#endif
-}
-
-
-void polybench_timer_print()
-{
-#ifdef POLYBENCH_GFLOPS
-      if  (__polybench_program_total_flops == 0)
-	{
-	  printf ("[PolyBench][WARNING] Program flops not defined, use polybench_set_program_flops(value)\n");
-	  printf ("%0.6lf\n", polybench_t_end - polybench_t_start);
-	}
-      else
-	printf ("%0.2lf\n",
-		(__polybench_program_total_flops /
-		 (double)(polybench_t_end - polybench_t_start)) / 1000000000);
-#else
-# ifndef POLYBENCH_CYCLE_ACCURATE_TIMER
-      printf ("%0.6f\n", polybench_t_end - polybench_t_start);
-# else
-      printf ("%Ld\n", polybench_c_end - polybench_c_start);
-# endif
-#endif
-}
-
 
 
 static

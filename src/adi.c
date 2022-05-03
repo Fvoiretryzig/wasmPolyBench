@@ -653,17 +653,17 @@ void adiCuda(CUdevice device, int tsteps, int n, DATA_TYPE POLYBENCH_2D(A,N,N,n,
 		cuError(cuLaunchKernel(func2, grid_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
 		cuError(cuLaunchKernel(func3, grid_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
 		for (int i1 = 1; i1 < _PB_N; i1++) {
-            void *args2[] = {&n, &A_gpu, &B_gpu, &X_gpu, &i1, NULL}
+            void *args2[] = {&n, &A_gpu, &B_gpu, &X_gpu, &i1, NULL};
             cuError(cuLaunchKernel(func4, grid_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args2, NULL));
 		}
         cuError(cuLaunchKernel(func5, grid_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
 		for (int i1 = 0; i1 < _PB_N-2; i1++) {
-            void *args2[] = {&n, &A_gpu, &B_gpu, &X_gpu, &i1, NULL}
+            void *args2[] = {&n, &A_gpu, &B_gpu, &X_gpu, &i1, NULL};
             cuError(cuLaunchKernel(func6, grid_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args2, NULL));
 		}
 	}
     SET_TIME(END)
-    fprintf(stdout, "GPU  actual Runtime: %0.6lfms\n", GET_DURING(GPU_END, GPU_START));
+    fprintf(stdout, "GPU  actual Runtime: %0.6lfms\n", GET_DURING(END, START));
 
     cuError(cuMemcpyDtoH(B_outputFromGpu, B_gpu, N * N * sizeof(DATA_TYPE)));
     cuError(cuMemcpyDtoH(X_outputFromGpu, X_gpu, N * N * sizeof(DATA_TYPE)));
@@ -749,7 +749,7 @@ int main(int argc, char *argv[]) {
 	int tsteps = TSTEPS;
 	int n = N;
 
-	GPU_argv_init();
+	//GPU_argv_init();
 
 	POLYBENCH_2D_ARRAY_DECL(A,DATA_TYPE,N,N,n,n);
 	POLYBENCH_2D_ARRAY_DECL(B,DATA_TYPE,N,N,n,n);
@@ -773,7 +773,7 @@ int main(int argc, char *argv[]) {
         cuError(cuDeviceGet(&device, i));
 
         cuError(cuDeviceGetName(name, GPU_DEVICE_NAME_SIZE, device));
-        //fprintf(stdout, "  GPU device name is: '%s'\n", name);
+        fprintf(stdout, "  GPU device name is: '%s'\n", name);
 
         SET_TIME(GPU_START);
 	    adiCuda(device, tsteps, n, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X_outputFromGpu));
