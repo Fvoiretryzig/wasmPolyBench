@@ -5,7 +5,7 @@
 #include <sys/time.h>
 #include <cuda.h>
 
-#include "bicg.cuh"
+#include "bicg.h"
 #include "polybench.h"
 #include "polybenchUtilFuncts.h"
 #include "cuda-helper.h"
@@ -394,8 +394,8 @@ void bicgCuda(CUdevice device, int nx, int ny, DATA_TYPE POLYBENCH_2D(A,NX,NY,nx
     unsigned grid1_x = (size_t)(ceil( ((float)NY) / ((float)DIM_THREAD_BLOCK_X) ))
     unsigned grid2_x = (size_t)(ceil( ((float)NX) / ((float)DIM_THREAD_BLOCK_X)
 
-    void *args1[] = {&nx, &ny, &A_gpu, &r_gpu, &s_gpu};
-    void *args1[] = {&nx, &ny, &A_gpu, &p_gpu, &q_gpu};
+    void *args1[] = {&nx, &ny, &A_gpu, &r_gpu, &s_gpu, NULL};
+    void *args1[] = {&nx, &ny, &A_gpu, &p_gpu, &q_gpu, NULL};
     SET_TIME(START)
     cuError(cuLaunchKernel(func1, grid1_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
     cuError(cuLaunchKernel(func2, grid2_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args2, NULL));

@@ -2,6 +2,7 @@
     "files.associations": {
         "cuda-helper.h": "c",
         "cmath": "c",
-        "math.h": "c"
+        "math.h": "c",
+        "assert.h": "c"
     }
 }

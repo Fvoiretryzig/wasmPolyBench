@@ -374,8 +374,8 @@ void ataxGpu(CUdevice device, int nx, int ny, DATA_TYPE POLYBENCH_2D(A, NX, NY,n
     unsigned grid1_x = (size_t)(ceil( ((float)NX) / ((float)DIM_THREAD_BLOCK_X);
     unsigned grid2_x = (size_t)(ceil( ((float)NY) / ((float)DIM_THREAD_BLOCK_X);
 	
-    void *args1[] = {&nx, &ny, &A_gpu, &x_gpu, &tmp_gpu};
-    void *args2[] = {&nx, &ny, &A_gpu, &y_gpu, &tmp_gpu};
+    void *args1[] = {&nx, &ny, &A_gpu, &x_gpu, &tmp_gpu, NULL};
+    void *args2[] = {&nx, &ny, &A_gpu, &y_gpu, &tmp_gpu, NULL};
 
     SET_TIME(START)
     cuError(cuLaunchKernel(func1, grid1_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));

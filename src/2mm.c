@@ -475,8 +475,8 @@ void mm2Cuda(CUdevice device, int ni, int nj, int nk, int nl, DATA_TYPE alpha, D
     unsigned grid2_x = (size_t)ceil( ((float)NL) / ((float)DIM_THREAD_BLOCK_X) );
     unsigned grid2_y = (size_t)ceil( ((float)NI) / ((float)DIM_THREAD_BLOCK_Y));
 
-    void *args1[] = {&ni, &nj, &nk, &nl, &alpha, &beta, &tmp_gpu, &A_gpu, &B_gpu};
-    void *args2[] = {&ni, &nj, &nk, &nl, &alpha, &beta, &tmp_gpu, &C_gpu, &D_gpu};
+    void *args1[] = {&ni, &nj, &nk, &nl, &alpha, &beta, &tmp_gpu, &A_gpu, &B_gpu, NULL};
+    void *args2[] = {&ni, &nj, &nk, &nl, &alpha, &beta, &tmp_gpu, &C_gpu, &D_gpu, NULL};
     SET_TIME(START)
     cuError(cuLaunchKernel(func1, grid1_x, grid1_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
 	cuError(cuLaunchKernel(func2, grid2_x, grid2_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args2, NULL));
