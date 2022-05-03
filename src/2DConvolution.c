@@ -147,7 +147,7 @@ void init(int ni, int nj, DATA_TYPE POLYBENCH_2D(A, NI, NJ, ni, nj))
     {
         for (j = 0; j < nj; ++j)
         {
-            A[i][j] = (float)rand() / RAND_MAX;
+            A[i][j] = (float)(rand() / RAND_MAX);
         }
     }
 }
@@ -231,7 +231,7 @@ int main()
         fprintf(stdout, "  GPU device name is: '%s'\n", name);
 
         SET_TIME(GPU_START);
-        convolution2DCuda(device, ni, nj, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu));
+        convolution2DCuda(device, ni, nj, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B_outputFromGpu));
         SET_TIME(GPU_END);
         fprintf(stdout, "GPU total Runtime: %0.6lfms\n", GET_DURING(GPU_END, GPU_START));
         fprintf(stdout, "Test 2DConvolution on GPU device %d Success\n", i);
