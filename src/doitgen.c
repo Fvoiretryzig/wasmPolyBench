@@ -206,11 +206,10 @@ void doitgenCuda(CUdevice device, DATA_TYPE* A, DATA_TYPE* C4, DATA_TYPE* sum, D
 	
     CUcontext context = NULL;
     CUmodule module = NULL;
-    CUfunction func = NULL;
+    CUfunction func1 = NULL, func2=NULL;
 
     unsigned grid_x = (unsigned int)ceil( ((float)NP) / ((float)DIM_THREAD_BLOCK_X) );
     unsigned grid_y = (unsigned int)ceil( ((float)NR) / ((float)DIM_THREAD_BLOCK_Y) );
-
 
     cuError(cuCtxCreate(&context, 0, device));
     cuError(cuMemAlloc(&AGpu, NR * NQ * NP * sizeof(DATA_TYPE)));
@@ -220,31 +219,23 @@ void doitgenCuda(CUdevice device, DATA_TYPE* A, DATA_TYPE* C4, DATA_TYPE* sum, D
     cuError(cuMemcpyHtoD(C4Gpu, C4, NP * NP * sizeof(DATA_TYPE)));
     cuError(cuMemcpyHtoD(sumGpu, sum, NR * NQ * NP * sizeof(DATA_TYPE)));
 
-    printf("  Loading module from ptx ...\n");
+    //printf("  Loading module from ptx ...\n");
     cuError(cuModuleLoadData(&module, KERNEL_PTX));
-    printf("  Load module from ptx Success\n");
+    //printf("  Load module from ptx Success\n");
 
     //doitgen_kernel1
-    printf("  Loading function from module ...\n");
-    cuError(cuModuleGetFunction(&func, module, "_Z15doitgen_kernel1PfS_S_i"));
-    printf("  Load function from module Success\n");
+    //printf("  Loading function from module ...\n");
+    cuError(cuModuleGetFunction(&func1, module, "_Z15doitgen_kernel1PfS_S_i"));
+    cuError(cuModuleGetFunction(&func2, module, "_Z15doitgen_kernel2PfS_S_i"));
+    //printf("  Load function from module Success\n");
+    SET_TIME(START)
     for (int r=0; r<NR; r++) {
-        //printf("  Launching doitgen_kernel1 %d kernel function ...\n", r);
         void *args[] = {&sumGpu, &AGpu, &C4Gpu, &r, NULL};
 		cuError(cuLaunchKernel(func, grid_x, grid_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args, NULL));
-        //printf("  Launch doitgen_kernel1 %d kernel function Success\n", r);
-    }
-    //doitgen_kernel2
-    printf("  Loading function from module ...\n");
-    cuError(cuModuleGetFunction(&func, module, "_Z15doitgen_kernel2PfS_S_i"));
-    printf("  Load function from module Success\n");
-    for (int r=0; r<NR; r++) {
-        //printf("  Launching doitgen_kernel2 %d kernel function ...\n", r);
-		void *args[] = {&sumGpu, &AGpu, &C4Gpu, &r, NULL};
         cuError(cuLaunchKernel(func, grid_x, grid_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args, NULL));
-        //printf("  Launch doitgen_kernel2 %d kernel function Success\n", r);
     }
-	
+	SET_TIME(END)
+    fprintf(stdout, "GPU actual Runtime: %0.6lfms\n", GET_DURING(END, START));
 	//cudaMemcpy(sum_outputFromGpu, sumGpu, NR * NQ * NP * sizeof(DATA_TYPE), cudaMemcpyDeviceToHost);
     cuError(cuMemcpyDtoH(sum_outputFromGpu, sumGpu, NR * NQ * NP * sizeof(DATA_TYPE)));
     cuError(cuMemFree(AGpu));
@@ -291,31 +282,31 @@ int main() {
 	C4 = (DATA_TYPE*)malloc(NP * NP * sizeof(DATA_TYPE));
 	sum = (DATA_TYPE*)malloc(NR * NQ * NP * sizeof(DATA_TYPE));
 	sum_outputFromGpu = (DATA_TYPE*)malloc(NR * NQ * NP * sizeof(DATA_TYPE));
-
+    
+    init_array(A, C4);
+    
     int deviceCount = 0;
     CUdevice device = 0;
 	char name[GPU_DEVICE_NAME_SIZE];
 
     cuError(cuInit(0));
     cuError(cuDeviceGetCount(&deviceCount));
-    printf("GPU device count = %d\n", deviceCount);
-
-    init_array(A, C4);
-
+    fprintf(stdout, "GPU device count = %d\n", deviceCount);
+    
     for (int i = 0; i < deviceCount; ++i) {
         printf("\nTesting doitgen on GPU device %d ...\n", i);
 
         cuError(cuDeviceGet(&device, i));
 
         cuError(cuDeviceGetName(name, GPU_DEVICE_NAME_SIZE, device));
-        printf("  GPU device name is: '%s'\n", name);
+        fprintf(stdout, "  GPU device name is: '%s'\n", name);
 
         SET_TIME(GPU_START);
 	    doitgenCuda(device, A, C4, sum, sum_outputFromGpu);
         SET_TIME(GPU_END);
-        fprintf(stdout, "GPU Runtime: %0.6lfms\n", GET_DURING(GPU_END, GPU_START));
+        fprintf(stdout, "GPU  total Runtime: %0.6lfms\n", GET_DURING(GPU_END, GPU_START));
 
-        printf("Test doitgen on GPU device %d Success\n", i);
+        fprintf(stdout, "Test doitgen on GPU device %d Success\n", i);
     }
 
 	SET_TIME(CPU_START);

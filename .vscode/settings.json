@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "cuda-helper.h": "c",
+        "cmath": "c"
+    }
+}
