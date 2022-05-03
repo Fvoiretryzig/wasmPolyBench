@@ -190,9 +190,9 @@ void convolution2DCuda(CUdevice device, int ni, int nj, DATA_TYPE POLYBENCH_2D(A
     unsigned grid_x = (size_t)ceil( ((float)NI) / ((float)DIM_THREAD_BLOCK_X) );
     unsigned grid_y = (size_t)ceil( ((float)NJ) / ((float)DIM_THREAD_BLOCK_Y) );
     void *args1[] = {&ni, &nj, &A_gpu, &B_gpu, NULL};
-    SET_TIME(START);
+    SET_TIME(START)
     cuError(cuLaunchKernel(func1, grid_x, grid_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
-    SET_TIME(END);
+    SET_TIME(END)
 
     cuError(cuMemcpyDtoH(B_outputFromGpu, B_gpu, sizeof(DATA_TYPE) * NI * NJ));
 	
@@ -230,9 +230,9 @@ int main()
         cuError(cuDeviceGetName(name, GPU_DEVICE_NAME_SIZE, device));
         fprintf(stdout, "  GPU device name is: '%s'\n", name);
 
-        SET_TIME(GPU_START);
+        SET_TIME(GPU_START)
         convolution2DCuda(device, ni, nj, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B_outputFromGpu));
-        SET_TIME(GPU_END);
+        SET_TIME(GPU_END)
         fprintf(stdout, "GPU total Runtime: %0.6lfms\n", GET_DURING(GPU_END, GPU_START));
         fprintf(stdout, "Test 2DConvolution on GPU device %d Success\n", i);
     }
