@@ -25,3 +25,4 @@ add_link_options(-Wl,--allow-undefined,--export=main,--strip-all,--no-entry)
 
 
 add_executable(doitgen.wasm src/doitgen.c)
+add_executable(adi.wasm src/adi.c)
