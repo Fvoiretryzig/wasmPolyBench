@@ -371,8 +371,8 @@ void ataxGpu(CUdevice device, int nx, int ny, DATA_TYPE POLYBENCH_2D(A, NX, NY,n
     cuError(cuModuleGetFunction(&func1, module, "_Z12atax_kernel1iiPfS_S_"));
     cuError(cuModuleGetFunction(&func2, module, "_Z12atax_kernel2iiPfS_S_"));
 
-    unsigned grid1_x = (size_t)(ceil( ((float)NX) / ((float)DIM_THREAD_BLOCK_X);
-    unsigned grid2_x = (size_t)(ceil( ((float)NY) / ((float)DIM_THREAD_BLOCK_X);
+    unsigned grid1_x = (size_t)(ceil( ((float)NX) / ((float)DIM_THREAD_BLOCK_X)));
+    unsigned grid2_x = (size_t)(ceil( ((float)NY) / ((float)DIM_THREAD_BLOCK_X)));
 	
     void *args1[] = {&nx, &ny, &A_gpu, &x_gpu, &tmp_gpu, NULL};
     void *args2[] = {&nx, &ny, &A_gpu, &y_gpu, &tmp_gpu, NULL};
@@ -392,7 +392,7 @@ void ataxGpu(CUdevice device, int nx, int ny, DATA_TYPE POLYBENCH_2D(A, NX, NY,n
     cuModuleUnload(module);
     cuCtxDestroy(context);
 }
-int main(int argc, char** argv)
+int main()
 {
 	int nx = NX;
 	int ny = NY;
@@ -433,7 +433,7 @@ int main(int argc, char** argv)
 		atax_cpu(nx, ny, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(x), POLYBENCH_ARRAY(y), POLYBENCH_ARRAY(tmp));
         SET_TIME(CPU_END)
         fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-		compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+		compareResults(ny, POLYBENCH_ARRAY(y), POLYBENCH_ARRAY(y_outputFromGpu));
 	#else
 		print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
 	#endif //RUN_ON_CPU

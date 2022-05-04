@@ -6,6 +6,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <cuda.h>
+#include <math.h>
 
 #include "gesummv.h"
 #include "polybench.h"
@@ -307,7 +308,7 @@ void gesummvCuda(CUdevice device, int n, DATA_TYPE alpha, DATA_TYPE beta, DATA_T
     cuError(cuModuleGetFunction(&func1, module, "_Z14gesummv_kerneliffPfS_S_S_S_"));
 
     unsigned grid_x = (unsigned int)ceil(((float)N) / ((float)DIM_THREAD_BLOCK_X));
-    void *args1 = {&n, &alpha, &beta, &A_gpu, &B_gpu, &tmp_gpu, &x_gpu, &y_gpu, NULL};
+    void *args1[] = {&n, &alpha, &beta, &A_gpu, &B_gpu, &tmp_gpu, &x_gpu, &y_gpu, NULL};
 
     SET_TIME(START)
     cuError(cuLaunchKernel(func1, grid_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
@@ -369,7 +370,8 @@ int main()
     gesummv(n, alpha, beta, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(tmp), POLYBENCH_ARRAY(x), POLYBENCH_ARRAY(y));
     SET_TIME(CPU_END)
     fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-    compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+	compareResults(n, POLYBENCH_ARRAY(y), POLYBENCH_ARRAY(y_outputFromGpu));
+
 #else
     print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
 #endif // RUN_ON_CPU

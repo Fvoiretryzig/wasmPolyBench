@@ -182,19 +182,6 @@ bicg.wasm/fast:
 .PHONY : bicg.wasm/fast
 
 #=============================================================================
-# Target rules for targets named correlation.wasm
-
-# Build rule for target.
-correlation.wasm: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 correlation.wasm
-.PHONY : correlation.wasm
-
-# fast build rule for target.
-correlation.wasm/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/correlation.wasm.dir/build.make CMakeFiles/correlation.wasm.dir/build
-.PHONY : correlation.wasm/fast
-
-#=============================================================================
 # Target rules for targets named covariance.wasm
 
 # Build rule for target.
@@ -443,30 +430,6 @@ src/bicg.s: src/bicg.c.s
 src/bicg.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/bicg.wasm.dir/build.make CMakeFiles/bicg.wasm.dir/src/bicg.c.s
 .PHONY : src/bicg.c.s
-
-src/correlation.obj: src/correlation.c.obj
-.PHONY : src/correlation.obj
-
-# target to build an object file
-src/correlation.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/correlation.wasm.dir/build.make CMakeFiles/correlation.wasm.dir/src/correlation.c.obj
-.PHONY : src/correlation.c.obj
-
-src/correlation.i: src/correlation.c.i
-.PHONY : src/correlation.i
-
-# target to preprocess a source file
-src/correlation.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/correlation.wasm.dir/build.make CMakeFiles/correlation.wasm.dir/src/correlation.c.i
-.PHONY : src/correlation.c.i
-
-src/correlation.s: src/correlation.c.s
-.PHONY : src/correlation.s
-
-# target to generate assembly for a file
-src/correlation.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/correlation.wasm.dir/build.make CMakeFiles/correlation.wasm.dir/src/correlation.c.s
-.PHONY : src/correlation.c.s
 
 src/covariance.obj: src/covariance.c.obj
 .PHONY : src/covariance.obj
@@ -721,7 +684,6 @@ help:
 	@echo "... adi.wasm"
 	@echo "... atax.wasm"
 	@echo "... bicg.wasm"
-	@echo "... correlation.wasm"
 	@echo "... covariance.wasm"
 	@echo "... doitgen.wasm"
 	@echo "... fdtd2d.wasm"
@@ -747,9 +709,6 @@ help:
 	@echo "... src/bicg.obj"
 	@echo "... src/bicg.i"
 	@echo "... src/bicg.s"
-	@echo "... src/correlation.obj"
-	@echo "... src/correlation.i"
-	@echo "... src/correlation.s"
 	@echo "... src/covariance.obj"
 	@echo "... src/covariance.i"
 	@echo "... src/covariance.s"

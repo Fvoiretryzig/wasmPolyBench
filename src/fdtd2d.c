@@ -345,8 +345,8 @@ void fdtdCuda(CUdevice device, int tmax, int nx, int ny, DATA_TYPE POLYBENCH_1D(
 
     cuError(cuMemcpyHtoD(_fict_gpu, _fict_,sizeof(DATA_TYPE) * TMAX));
     cuError(cuMemcpyHtoD(ex_gpu, ex,sizeof(DATA_TYPE) * NX * NY));
-    cuError(cuMemcpyHtoD(ey_gpu, ex,sizeof(DATA_TYPE) * NX * NY));
-    cuError(cuMemcpyHtoD(hz_gpu, ex,sizeof(DATA_TYPE) * NX * NY));
+    cuError(cuMemcpyHtoD(ey_gpu, ey,sizeof(DATA_TYPE) * NX * NY));
+    cuError(cuMemcpyHtoD(hz_gpu, hz,sizeof(DATA_TYPE) * NX * NY));
 
     cuError(cuModuleLoadData(&module, KERNEL_PTX));
 
@@ -354,7 +354,7 @@ void fdtdCuda(CUdevice device, int tmax, int nx, int ny, DATA_TYPE POLYBENCH_1D(
     cuError(cuModuleGetFunction(&func2, module, "_Z17fdtd_step2_kerneliiPfS_S_i"));
     cuError(cuModuleGetFunction(&func3, module, "_Z17fdtd_step3_kerneliiPfS_S_i"));
 
-    unsigned grid_x = (size_t)ceil(((float)NY) / ((float)DIM_THREAD_BLOCK_X);
+    unsigned grid_x = (size_t)ceil(((float)NY) / ((float)DIM_THREAD_BLOCK_X));
     unsigned grid_y = (size_t)ceil(((float)NX) / ((float)DIM_THREAD_BLOCK_Y));
 
     SET_TIME(START)
@@ -422,7 +422,7 @@ int main()
 		runFdtd(tmax, nx, ny, POLYBENCH_ARRAY(_fict_), POLYBENCH_ARRAY(ex), POLYBENCH_ARRAY(ey), POLYBENCH_ARRAY(hz));
         SET_TIME(CPU_END)
         fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-		compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+		compareResults(nx, ny, POLYBENCH_ARRAY(hz), POLYBENCH_ARRAY(hz_outputFromGpu));
 	#else
 		print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
 	#endif //RUN_ON_CPU

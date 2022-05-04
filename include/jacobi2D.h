@@ -21,27 +21,27 @@
 /* Define the possible dataset sizes. */
 #  ifdef MINI_DATASET
 #define TSTEPS 20
-#define N 1000
+#define JACOBI_N 1000
 #  endif
 
 #  ifdef SMALL_DATASET
 #define TSTEPS 20
-#define N 1000
+#define JACOBI_N 1000
 #  endif
 
 #  ifdef STANDARD_DATASET /* Default if unspecified. */
 #define TSTEPS 20
-#define N 1000
+#define JACOBI_N 1000
 #  endif
 
 #  ifdef LARGE_DATASET
 #define TSTEPS 20
-#define N 1000
+#define JACOBI_N 1000
 #  endif
 
 #  ifdef EXTRALARGE_DATASET
 #define TSTEPS 20
-#define N 1000
+#define JACOBI_N 1000
 #  endif
 # endif /* !N */
 

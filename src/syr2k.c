@@ -284,7 +284,7 @@ void syr2kCuda(CUdevice device, int ni, int nj, DATA_TYPE alpha, DATA_TYPE beta,
     cuError(cuCtxCreate(&context, 0, device));
     cuError(cuMemAlloc(&A_gpu, sizeof(DATA_TYPE) * NI * NJ));
     cuError(cuMemAlloc(&B_gpu, sizeof(DATA_TYPE) * NI * NJ));
-    cuError(cuMemAlloc(&C_gpu, sizeof(DATA_TYPE) * NI * NI)));
+    cuError(cuMemAlloc(&C_gpu, sizeof(DATA_TYPE) * NI * NI));
     cuError(cuMemcpyHtoD(A_gpu, A, sizeof(DATA_TYPE) * NI * NJ));
     cuError(cuMemcpyHtoD(B_gpu, B, sizeof(DATA_TYPE) * NI * NJ));
     cuError(cuMemcpyHtoD(C_gpu, C, sizeof(DATA_TYPE) * NI * NI));
@@ -355,7 +355,7 @@ int main()
     syr2kCpu(ni, nj, alpha, beta, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(C));
     SET_TIME(CPU_END)
     fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-    compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+	compareResults(ni, POLYBENCH_ARRAY(C), POLYBENCH_ARRAY(C_outputFromGpu));
 #else
     print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
 #endif // RUN_ON_CPU

@@ -68,7 +68,6 @@ all: CMakeFiles/2mm.wasm.dir/all
 all: CMakeFiles/adi.wasm.dir/all
 all: CMakeFiles/atax.wasm.dir/all
 all: CMakeFiles/bicg.wasm.dir/all
-all: CMakeFiles/correlation.wasm.dir/all
 all: CMakeFiles/covariance.wasm.dir/all
 all: CMakeFiles/doitgen.wasm.dir/all
 all: CMakeFiles/fdtd2d.wasm.dir/all
@@ -91,7 +90,6 @@ clean: CMakeFiles/2mm.wasm.dir/clean
 clean: CMakeFiles/adi.wasm.dir/clean
 clean: CMakeFiles/atax.wasm.dir/clean
 clean: CMakeFiles/bicg.wasm.dir/clean
-clean: CMakeFiles/correlation.wasm.dir/clean
 clean: CMakeFiles/covariance.wasm.dir/clean
 clean: CMakeFiles/doitgen.wasm.dir/clean
 clean: CMakeFiles/fdtd2d.wasm.dir/clean
@@ -235,39 +233,13 @@ CMakeFiles/bicg.wasm.dir/clean:
 .PHONY : CMakeFiles/bicg.wasm.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/correlation.wasm.dir
-
-# All Build rule for target.
-CMakeFiles/correlation.wasm.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/correlation.wasm.dir/build.make CMakeFiles/correlation.wasm.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/correlation.wasm.dir/build.make CMakeFiles/correlation.wasm.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=11,12 "Built target correlation.wasm"
-.PHONY : CMakeFiles/correlation.wasm.dir/all
-
-# Build rule for subdir invocation for target.
-CMakeFiles/correlation.wasm.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tangshimei/wasmPolyBench/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/correlation.wasm.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/tangshimei/wasmPolyBench/CMakeFiles 0
-.PHONY : CMakeFiles/correlation.wasm.dir/rule
-
-# Convenience name for target.
-correlation.wasm: CMakeFiles/correlation.wasm.dir/rule
-.PHONY : correlation.wasm
-
-# clean rule for target.
-CMakeFiles/correlation.wasm.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/correlation.wasm.dir/build.make CMakeFiles/correlation.wasm.dir/clean
-.PHONY : CMakeFiles/correlation.wasm.dir/clean
-
-#=============================================================================
 # Target rules for target CMakeFiles/covariance.wasm.dir
 
 # All Build rule for target.
 CMakeFiles/covariance.wasm.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/covariance.wasm.dir/build.make CMakeFiles/covariance.wasm.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/covariance.wasm.dir/build.make CMakeFiles/covariance.wasm.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=13,14 "Built target covariance.wasm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=11,12 "Built target covariance.wasm"
 .PHONY : CMakeFiles/covariance.wasm.dir/all
 
 # Build rule for subdir invocation for target.
@@ -293,7 +265,7 @@ CMakeFiles/covariance.wasm.dir/clean:
 CMakeFiles/doitgen.wasm.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/doitgen.wasm.dir/build.make CMakeFiles/doitgen.wasm.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/doitgen.wasm.dir/build.make CMakeFiles/doitgen.wasm.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=15,16 "Built target doitgen.wasm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=13,14 "Built target doitgen.wasm"
 .PHONY : CMakeFiles/doitgen.wasm.dir/all
 
 # Build rule for subdir invocation for target.
@@ -319,7 +291,7 @@ CMakeFiles/doitgen.wasm.dir/clean:
 CMakeFiles/fdtd2d.wasm.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fdtd2d.wasm.dir/build.make CMakeFiles/fdtd2d.wasm.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/fdtd2d.wasm.dir/build.make CMakeFiles/fdtd2d.wasm.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=17,18 "Built target fdtd2d.wasm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=15,16 "Built target fdtd2d.wasm"
 .PHONY : CMakeFiles/fdtd2d.wasm.dir/all
 
 # Build rule for subdir invocation for target.
@@ -345,7 +317,7 @@ CMakeFiles/fdtd2d.wasm.dir/clean:
 CMakeFiles/gemm.wasm.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm.wasm.dir/build.make CMakeFiles/gemm.wasm.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/gemm.wasm.dir/build.make CMakeFiles/gemm.wasm.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=19,20 "Built target gemm.wasm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=17,18 "Built target gemm.wasm"
 .PHONY : CMakeFiles/gemm.wasm.dir/all
 
 # Build rule for subdir invocation for target.
@@ -371,7 +343,7 @@ CMakeFiles/gemm.wasm.dir/clean:
 CMakeFiles/gesummv.wasm.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/gesummv.wasm.dir/build.make CMakeFiles/gesummv.wasm.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/gesummv.wasm.dir/build.make CMakeFiles/gesummv.wasm.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=21,22 "Built target gesummv.wasm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=19,20 "Built target gesummv.wasm"
 .PHONY : CMakeFiles/gesummv.wasm.dir/all
 
 # Build rule for subdir invocation for target.
@@ -397,7 +369,7 @@ CMakeFiles/gesummv.wasm.dir/clean:
 CMakeFiles/gramschmidt.wasm.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/gramschmidt.wasm.dir/build.make CMakeFiles/gramschmidt.wasm.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/gramschmidt.wasm.dir/build.make CMakeFiles/gramschmidt.wasm.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=23,24 "Built target gramschmidt.wasm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=21,22 "Built target gramschmidt.wasm"
 .PHONY : CMakeFiles/gramschmidt.wasm.dir/all
 
 # Build rule for subdir invocation for target.
@@ -423,7 +395,7 @@ CMakeFiles/gramschmidt.wasm.dir/clean:
 CMakeFiles/jacobi2D.wasm.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/jacobi2D.wasm.dir/build.make CMakeFiles/jacobi2D.wasm.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/jacobi2D.wasm.dir/build.make CMakeFiles/jacobi2D.wasm.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=25,26 "Built target jacobi2D.wasm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=23,24 "Built target jacobi2D.wasm"
 .PHONY : CMakeFiles/jacobi2D.wasm.dir/all
 
 # Build rule for subdir invocation for target.
@@ -449,7 +421,7 @@ CMakeFiles/jacobi2D.wasm.dir/clean:
 CMakeFiles/lu.wasm.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/lu.wasm.dir/build.make CMakeFiles/lu.wasm.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/lu.wasm.dir/build.make CMakeFiles/lu.wasm.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=27,28 "Built target lu.wasm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=25,26 "Built target lu.wasm"
 .PHONY : CMakeFiles/lu.wasm.dir/all
 
 # Build rule for subdir invocation for target.
@@ -475,7 +447,7 @@ CMakeFiles/lu.wasm.dir/clean:
 CMakeFiles/mvt.wasm.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvt.wasm.dir/build.make CMakeFiles/mvt.wasm.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mvt.wasm.dir/build.make CMakeFiles/mvt.wasm.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=29,30 "Built target mvt.wasm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=27,28 "Built target mvt.wasm"
 .PHONY : CMakeFiles/mvt.wasm.dir/all
 
 # Build rule for subdir invocation for target.
@@ -501,7 +473,7 @@ CMakeFiles/mvt.wasm.dir/clean:
 CMakeFiles/syr2k.wasm.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/syr2k.wasm.dir/build.make CMakeFiles/syr2k.wasm.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/syr2k.wasm.dir/build.make CMakeFiles/syr2k.wasm.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=31,32 "Built target syr2k.wasm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/tangshimei/wasmPolyBench/CMakeFiles --progress-num=29,30 "Built target syr2k.wasm"
 .PHONY : CMakeFiles/syr2k.wasm.dir/all
 
 # Build rule for subdir invocation for target.

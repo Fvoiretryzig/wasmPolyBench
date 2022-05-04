@@ -6,6 +6,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <cuda.h>
+#include <math.h>
 
 #include "gemm.h"
 #include "polybench.h"
@@ -285,11 +286,8 @@ void gemmCuda(CUdevice device, int ni, int nj, int nk, DATA_TYPE alpha, DATA_TYP
 
     cuError(cuModuleGetFunction(&func1, module, "_Z11gemm_kerneliiiffPfS_S_"));
 
-    unsigned grid_x = (size_t)(ceil( ((float)NI)/ ((float)DIM_THREAD_BLOCK_X) );
-    unsigned grid_y = (size_t)(ceil( ((float)NJ)/ ((float)DIM_THREAD_BLOCK_Y) );
-	
-	dim3 block(DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y);
-	dim3 grid((size_t)(ceil( ((float)NI)/ ((float)block.x) )),(size_t)(ceil( ((float)NJ)/ ((float)block.y) )));
+    unsigned grid_x = (size_t)(ceil( ((float)NI)/ ((float)DIM_THREAD_BLOCK_X) ));
+    unsigned grid_y = (size_t)(ceil( ((float)NJ)/ ((float)DIM_THREAD_BLOCK_Y) ));
 
     void *args1[] = {&ni, &nj, &nk, &alpha, &beta, &A_gpu, &B_gpu, &C_gpu, NULL};
     SET_TIME(START)
@@ -350,7 +348,7 @@ int main()
     gemm(ni, nj, nk, alpha, beta, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(C));
     SET_TIME(CPU_END)
     fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-    compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+	compareResults(ni, nj, POLYBENCH_ARRAY(C), POLYBENCH_ARRAY(C_outputFromGpu));
 #else
     print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
 #endif // RUN_ON_CPU

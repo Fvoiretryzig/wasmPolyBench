@@ -219,7 +219,7 @@ void compareResults(int n, DATA_TYPE POLYBENCH_2D(a, N, N, n, n), DATA_TYPE POLY
 
 void runJacobi2DCUDA(CUdevice device, int tsteps, int n, DATA_TYPE POLYBENCH_2D(A, N, N, n, n), DATA_TYPE POLYBENCH_2D(B, N, N, n, n), DATA_TYPE POLYBENCH_2D(A_outputFromGpu, N, N, n, n), DATA_TYPE POLYBENCH_2D(B_outputFromGpu, N, N, n, n))
 {
-    CUdeviceptr A_gpu, Bgpu;
+    CUdeviceptr Agpu, Bgpu;
     CUcontext context = NULL;
     CUmodule module = NULL;
     CUfunction func1 = NULL, func2 = NULL;
@@ -238,17 +238,12 @@ void runJacobi2DCUDA(CUdevice device, int tsteps, int n, DATA_TYPE POLYBENCH_2D(
     unsigned grid_x = (unsigned int)ceil(((float)N) / ((float)DIM_THREAD_BLOCK_X));
     unsigned grid_y = (unsigned int)ceil(((float)N) / ((float)DIM_THREAD_BLOCK_Y));
 
-    dim3 block(DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y);
-    dim3 grid((unsigned int)ceil(((float)N) / ((float)block.x)), (unsigned int)ceil(((float)N) / ((float)block.y)));
-
     SET_TIME(START)
-    cuError(cuLaunchKernel(func1, grid1_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
-    cuError(cuLaunchKernel(func2, grid2_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args2, NULL));
     void *args1[] = {&n, &Agpu, &Bgpu, NULL};
     for (int t = 0; t < _PB_TSTEPS; t++)
     {
-        cuError(cuLaunchKernel(func1, grid1_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
-        cuError(cuLaunchKernel(func2, grid2_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
+        cuError(cuLaunchKernel(func1, grid_x, grid_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
+        cuError(cuLaunchKernel(func2, grid_x, grid_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
     }
     SET_TIME(END)
     fprintf(stdout, "GPU  actual Runtime: %0.6lfms\n", GET_DURING(END, START));
@@ -303,7 +298,7 @@ int main()
     runJacobi2DCpu(tsteps, n, POLYBENCH_ARRAY(a), POLYBENCH_ARRAY(b));
     SET_TIME(CPU_END)
     fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-    compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+	compareResults(n, POLYBENCH_ARRAY(a), POLYBENCH_ARRAY(a_outputFromGpu), POLYBENCH_ARRAY(b), POLYBENCH_ARRAY(b_outputFromGpu));
 #else
     print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
 #endif // RUN_ON_CPU

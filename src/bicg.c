@@ -391,11 +391,11 @@ void bicgCuda(CUdevice device, int nx, int ny, DATA_TYPE POLYBENCH_2D(A,NX,NY,nx
     cuError(cuModuleGetFunction(&func1, module, "_Z12bicg_kernel1iiPfS_S_"));
     cuError(cuModuleGetFunction(&func2, module, "_Z12bicg_kernel2iiPfS_S_"));
 
-    unsigned grid1_x = (size_t)(ceil( ((float)NY) / ((float)DIM_THREAD_BLOCK_X) ))
-    unsigned grid2_x = (size_t)(ceil( ((float)NX) / ((float)DIM_THREAD_BLOCK_X)
+    unsigned grid1_x = (size_t)(ceil( ((float)NY) / ((float)DIM_THREAD_BLOCK_X) ));
+    unsigned grid2_x = (size_t)(ceil( ((float)NX) / ((float)DIM_THREAD_BLOCK_X)));
 
     void *args1[] = {&nx, &ny, &A_gpu, &r_gpu, &s_gpu, NULL};
-    void *args1[] = {&nx, &ny, &A_gpu, &p_gpu, &q_gpu, NULL};
+    void *args2[] = {&nx, &ny, &A_gpu, &p_gpu, &q_gpu, NULL};
     SET_TIME(START)
     cuError(cuLaunchKernel(func1, grid1_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
     cuError(cuLaunchKernel(func2, grid2_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args2, NULL));
@@ -457,7 +457,8 @@ int main()
 		bicg_cpu(nx, ny, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(r), POLYBENCH_ARRAY(s), POLYBENCH_ARRAY(p), POLYBENCH_ARRAY(q));
         SET_TIME(CPU_END)
         fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-		compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+		compareResults(nx, ny, POLYBENCH_ARRAY(s), POLYBENCH_ARRAY(s_outputFromGpu), POLYBENCH_ARRAY(q), 
+			POLYBENCH_ARRAY(q_outputFromGpu));
 	#else
 		print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
 	#endif //RUN_ON_CPU

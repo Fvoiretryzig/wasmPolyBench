@@ -6,6 +6,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <cuda.h>
+#include <math.h>
 
 #include "gramschmidt.h"
 #include "polybench.h"
@@ -539,6 +540,8 @@ void gramschmidtCuda(CUdevice device, int ni, int nj, DATA_TYPE POLYBENCH_2D(A,N
     cuError(cuMemAlloc(&R_gpu, sizeof(DATA_TYPE) * NJ * NJ));
     cuError(cuMemAlloc(&Q_gpu, sizeof(DATA_TYPE) * NI * NJ));
     cuError(cuMemcpyHtoD(A_gpu, A, sizeof(DATA_TYPE) * NI * NJ));
+	cuError(cuMemcpyHtoD(R_gpu, R, sizeof(DATA_TYPE) * NJ * NJ));
+	cuError(cuMemcpyHtoD(Q_gpu, Q, sizeof(DATA_TYPE) * NI * NJ));
 
     cuError(cuModuleLoadData(&module, KERNEL_PTX));
 
@@ -546,17 +549,13 @@ void gramschmidtCuda(CUdevice device, int ni, int nj, DATA_TYPE POLYBENCH_2D(A,N
     cuError(cuModuleGetFunction(&func2, module, "_Z19gramschmidt_kernel2iiPfS_S_i"));
     cuError(cuModuleGetFunction(&func3, module, "_Z19gramschmidt_kernel3iiPfS_S_i"));
 
-    dim3 block(DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y);
-	dim3 gridKernel1(1, 1);
-	dim3 gridKernel2((size_t)ceil(((float)NJ) / ((float)DIM_THREAD_BLOCK_X)), 1);
-	dim3 gridKernel3((size_t)ceil(((float)NJ) / ((float)DIM_THREAD_BLOCK_X)), 1);
     unsigned grid2_x = (size_t)ceil(((float)NJ) / ((float)DIM_THREAD_BLOCK_X));
     unsigned grid3_x = (size_t)ceil(((float)NJ) / ((float)DIM_THREAD_BLOCK_X));
-    void *args1[] = {&ni, &nj, &A_gpu, &R_gpu, &Q_gpu, &k, NULL};
 	int k;
 	SET_TIME(START)
     for (k = 0; k < _PB_NJ; k++)
 	{
+		void *args1[] = {&ni, &nj, &A_gpu, &R_gpu, &Q_gpu, &k, NULL};
         cuError(cuLaunchKernel(func1, 1, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
         cuError(cuLaunchKernel(func2, grid2_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
         cuError(cuLaunchKernel(func3, grid3_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
@@ -571,7 +570,7 @@ void gramschmidtCuda(CUdevice device, int ni, int nj, DATA_TYPE POLYBENCH_2D(A,N
     cuModuleUnload(module);
     cuCtxDestroy(context);
 }
-int main(int argc, char *argv[])
+int main()
 {
 	/* Retrieve problem size. */
 	int ni = NI;
@@ -612,7 +611,7 @@ int main(int argc, char *argv[])
 		gramschmidt(ni, nj, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(R), POLYBENCH_ARRAY(Q));
         SET_TIME(CPU_END)
         fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-		compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+		compareResults(ni, nj, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(A_outputFromGpu));
 	#else
 		print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
 	#endif //RUN_ON_CPU

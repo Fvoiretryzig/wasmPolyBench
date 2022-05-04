@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include <math.h>
 
 #include "lu.h"
 #include "polybench.h"
@@ -14,7 +15,7 @@
 // define the error threshold for the results "not matching"
 #define PERCENT_DIFF_ERROR_THRESHOLD 0.05
 
-#define GPU_DEVICE 0
+#define N 2048
 
 #define RUN_ON_CPU
 
@@ -201,9 +202,9 @@ void luCuda(CUdevice device, int n, DATA_TYPE POLYBENCH_2D(A, N, N, n, n), DATA_
 
     CUcontext context = NULL;
     CUmodule module = NULL;
-    CUfunction func1 = NULL, func2 = NULL
+    CUfunction func1 = NULL, func2 = NULL;
 
-                                 cuError(cuCtxCreate(&context, 0, device));
+    cuError(cuCtxCreate(&context, 0, device));
     cuError(cuMemAlloc(&AGpu, N * N * sizeof(DATA_TYPE)));
     cuError(cuMemcpyHtoD(AGpu, A, N * N * sizeof(DATA_TYPE)));
 
@@ -212,10 +213,6 @@ void luCuda(CUdevice device, int n, DATA_TYPE POLYBENCH_2D(A, N, N, n, n), DATA_
     cuError(cuModuleGetFunction(&func1, module, "_Z10lu_kernel1iPfi"));
     cuError(cuModuleGetFunction(&func2, module, "_Z10lu_kernel2iPfi"));
 
-    dim3 block1(DIM_THREAD_BLOCK_KERNEL_1_X, DIM_THREAD_BLOCK_KERNEL_1_Y);
-    dim3 block2(DIM_THREAD_BLOCK_KERNEL_2_X, DIM_THREAD_BLOCK_KERNEL_2_Y);
-    dim3 grid1(1, 1, 1);
-    dim3 grid2(1, 1, 1);
 
     SET_TIME(START)
     for (int k = 0; k < N; k++)
@@ -276,7 +273,7 @@ int main()
     lu(n, POLYBENCH_ARRAY(A));
     SET_TIME(CPU_END)
     fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-    compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+	compareResults(n, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(A_outputFromGpu));
 #else
     print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
 #endif // RUN_ON_CPU

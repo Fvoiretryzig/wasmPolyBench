@@ -681,7 +681,7 @@ void correlationCuda(CUdevice device, int m, int n, DATA_TYPE POLYBENCH_2D(data,
 
 	DATA_TYPE valueAtSymmatIndexMTimesMPlus1PlusMPoint = 1.0;
 	
-    cuError(cuMemcpyDtoH(&(symmat_gpu[(M-1)*M + (M-1)]), &valueAtSymmatIndexMTimesMPlus1PlusMPoint, sizeof(DATA_TYPE)));
+    cuError(cuMemcpyDtoH(&symmat_gpu+((M-1)*M+(M-1))*sizeof(DATA_TYPE), &valueAtSymmatIndexMTimesMPlus1PlusMPoint, sizeof(DATA_TYPE)));
     cuError(cuMemcpyDtoH(symmat_outputFromGpu, symmat_gpu, sizeof(DATA_TYPE) * M * N));
 
     cuError(cuMemFree(data_gpu));
@@ -732,7 +732,7 @@ int main()
 		correlation(m, n, POLYBENCH_ARRAY(data), POLYBENCH_ARRAY(mean), POLYBENCH_ARRAY(stddev), POLYBENCH_ARRAY(symmat));
         SET_TIME(CPU_END)
         fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-		compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+		compareResults(m, n, POLYBENCH_ARRAY(symmat), POLYBENCH_ARRAY(symmat_outputFromGpu));
 	#else
 		print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
 	#endif //RUN_ON_CPU

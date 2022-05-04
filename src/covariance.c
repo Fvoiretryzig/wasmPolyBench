@@ -442,9 +442,9 @@ void covarianceCuda(CUdevice device, int m, int n, DATA_TYPE POLYBENCH_2D(data,M
     CUfunction func1 = NULL, func2 = NULL, func3=NULL;
 
     cuError(cuCtxCreate(&context, 0, device));
-    cuError(cuMemAlloc(&data_gpu, sizeof(DATA_TYPE) * M * N);
-    cuError(cuMemAlloc(&symmat_gpu, sizeof(DATA_TYPE) * M * M);
-    cuError(cuMemAlloc(&mean_gpu, sizeof(DATA_TYPE) * M);
+    cuError(cuMemAlloc(&data_gpu, sizeof(DATA_TYPE) * M * N));
+    cuError(cuMemAlloc(&symmat_gpu, sizeof(DATA_TYPE) * M * M));
+    cuError(cuMemAlloc(&mean_gpu, sizeof(DATA_TYPE) * M));
     cuError(cuMemcpyHtoD(data_gpu, data, sizeof(DATA_TYPE) * M * N));
     cuError(cuMemcpyHtoD(symmat_gpu, symmat, sizeof(DATA_TYPE) * M * M));
     cuError(cuMemcpyHtoD(mean_gpu, mean, sizeof(DATA_TYPE) * M));
@@ -461,7 +461,7 @@ void covarianceCuda(CUdevice device, int m, int n, DATA_TYPE POLYBENCH_2D(data,M
     unsigned grid3_x = (size_t)(ceil((float)M) / ((float)DIM_THREAD_BLOCK_KERNEL_3_X));
 
     void *args1[] = {&m,&n,&mean_gpu,&data_gpu, NULL};
-    void *agrs2[] = {&m,&n,&symmat_gpu,&data_gpu, NULL};
+    void *args2[] = {&m,&n,&symmat_gpu,&data_gpu, NULL};
     SET_TIME(START)
     cuError(cuLaunchKernel(func1, grid1_x, 1, 1, DIM_THREAD_BLOCK_KERNEL_1_X, DIM_THREAD_BLOCK_KERNEL_1_Y, 1, 0, NULL, args1, NULL));
     cuError(cuLaunchKernel(func2, grid2_x, grid2_y, 1, DIM_THREAD_BLOCK_KERNEL_2_X, DIM_THREAD_BLOCK_KERNEL_2_Y, 1, 0, NULL, args1, NULL));
@@ -518,7 +518,7 @@ int main()
 		covariance(m, n, POLYBENCH_ARRAY(data), POLYBENCH_ARRAY(symmat), POLYBENCH_ARRAY(mean));
         SET_TIME(CPU_END)
         fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-		compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+		compareResults(m, n, POLYBENCH_ARRAY(symmat), POLYBENCH_ARRAY(symmat_outputFromGpu));
 	#else
 		print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
 	#endif //RUN_ON_CPU
@@ -530,5 +530,4 @@ int main()
 
   	return 0;
 }
-
 #include "../include/polybench.c"

@@ -3,7 +3,6 @@
 /home/tangshimei/wasmPolyBench/CMakeFiles/adi.wasm.dir
 /home/tangshimei/wasmPolyBench/CMakeFiles/atax.wasm.dir
 /home/tangshimei/wasmPolyBench/CMakeFiles/bicg.wasm.dir
-/home/tangshimei/wasmPolyBench/CMakeFiles/correlation.wasm.dir
 /home/tangshimei/wasmPolyBench/CMakeFiles/covariance.wasm.dir
 /home/tangshimei/wasmPolyBench/CMakeFiles/doitgen.wasm.dir
 /home/tangshimei/wasmPolyBench/CMakeFiles/fdtd2d.wasm.dir
