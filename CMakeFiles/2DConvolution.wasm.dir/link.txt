@@ -1,0 +1,1 @@
+/home/tangshimei/wasi-sdk-14.0/bin/clang --target=wasm32-wasi -Wl,--allow-undefined,--export=main,--strip-all,--no-entry CMakeFiles/2DConvolution.wasm.dir/src/2DConvolution.c.obj -o 2DConvolution.wasm 

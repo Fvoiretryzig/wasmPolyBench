@@ -1,0 +1,1 @@
+/home/tangshimei/wasi-sdk-14.0/bin/clang --target=wasm32-wasi -Wl,--allow-undefined,--export=main,--strip-all,--no-entry CMakeFiles/jacobi2D.wasm.dir/src/jacobi2D.c.obj -o jacobi2D.wasm 

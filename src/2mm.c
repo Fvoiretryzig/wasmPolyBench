@@ -470,7 +470,7 @@ void mm2Cuda(CUdevice device, int ni, int nj, int nk, int nl, DATA_TYPE alpha, D
     cuError(cuModuleGetFunction(&func1, module, "_Z11mm2_kernel1iiiiffPfS_S_"));
     cuError(cuModuleGetFunction(&func2, module, "_Z11mm2_kernel2iiiiffPfS_S_"));
 
-    unsigned grid1_x = (size_t)ceil( ((float)NJ) / ((float)DIM_THREAD_BLOCK_X);
+    unsigned grid1_x = (size_t)ceil( ((float)NJ) / ((float)DIM_THREAD_BLOCK_X));
     unsigned grid1_y = (size_t)ceil( ((float)NI) / ((float)DIM_THREAD_BLOCK_Y));
     unsigned grid2_x = (size_t)ceil( ((float)NL) / ((float)DIM_THREAD_BLOCK_X) );
     unsigned grid2_y = (size_t)ceil( ((float)NI) / ((float)DIM_THREAD_BLOCK_Y));
@@ -540,10 +540,10 @@ int main()
 	#ifdef RUN_ON_CPU
 	  	polybench_start_instruments;
         SET_TIME(CPU_START)
-		mm2Cuda(ni, nj, nk, nl, alpha, beta, POLYBENCH_ARRAY(tmp), POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(C), POLYBENCH_ARRAY(D), POLYBENCH_ARRAY(D_outputFromGpu));
-        SET_TIME(CPU_END)
+        mm2_cpu(ni, nj, nk, nl, alpha, beta, POLYBENCH_ARRAY(tmp), POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(C), POLYBENCH_ARRAY(D));
+		SET_TIME(CPU_END)
         fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-		compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+		compareResults(ni, nl, POLYBENCH_ARRAY(D), POLYBENCH_ARRAY(D_outputFromGpu));
 	#else
 		print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
 	#endif //RUN_ON_CPU

@@ -1,0 +1,1 @@
+/home/tangshimei/wasi-sdk-14.0/bin/clang --target=wasm32-wasi -Wl,--allow-undefined,--export=main,--strip-all,--no-entry CMakeFiles/gemm.wasm.dir/src/gemm.c.obj -o gemm.wasm 
