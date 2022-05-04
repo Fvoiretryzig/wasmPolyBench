@@ -31,5 +31,8 @@ add_executable(atax.wasm src/atax.c)
 add_executable(bicg.wasm src/bicg.c)
 add_executable(correlation.wasm src/correlation.c)
 add_executable(doitgen.wasm src/doitgen.c)
-
-
+add_executable(gemm.wasm src/gemm.c)
+add_executable(gesummv.wasm src/gesummv.c)
+add_executable(jacobi2D.wasm src/jacobi2D.c)
+add_executable(lu.wasm src/lu.c)
+add_executable(mvt.wasm src/mvt.c)
