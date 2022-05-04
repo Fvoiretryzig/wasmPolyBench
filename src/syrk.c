@@ -278,7 +278,7 @@ void syrkCuda(CUdevice device, int ni, int nj, DATA_TYPE alpha, DATA_TYPE beta, 
     void *args1[] = {&ni, &nj, &alpha, &beta, &A_gpu, &C_gpu, NULL};
 
     SET_TIME(START)
-    cuError(cuLaunchKernel(func1, grid_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
+    cuError(cuLaunchKernel(func1, grid_x, grid_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
     SET_TIME(END)
     fprintf(stdout, "GPU  actual Runtime: %0.6lfms\n", GET_DURING(END, START));
 
