@@ -371,7 +371,7 @@ void bicgCuda(CUdevice device, int nx, int ny, DATA_TYPE POLYBENCH_2D(A,NX,NY,nx
 
     CUcontext context = NULL;
     CUmodule module = NULL;
-    CUfunction func1 = NULL, func2 = NULL, func3 = NULL, func4 = NULL, func5 = NULL, func6 = NULL;
+    CUfunction func1 = NULL, func2 = NULL;
 
     cuError(cuCtxCreate(&context, 0, device));
     cuError(cuMemAlloc(&A_gpu, sizeof(DATA_TYPE) * NX * NY));

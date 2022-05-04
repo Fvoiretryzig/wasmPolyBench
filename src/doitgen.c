@@ -197,8 +197,6 @@ void init_array(DATA_TYPE *A, DATA_TYPE *C4) {
   	}
 }
 void doitgenCuda(CUdevice device, DATA_TYPE* A, DATA_TYPE* C4, DATA_TYPE* sum, DATA_TYPE* sum_outputFromGpu) {
-	double t_start, t_end;
-
 	//DATA_TYPE* AGpu;
 	//DATA_TYPE* C4Gpu;
 	//DATA_TYPE* sumGpu;
