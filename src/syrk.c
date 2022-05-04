@@ -179,7 +179,7 @@ static const char *KERNEL_PTX = ".version 6.5\n"
 ""
 "BB0_11:\n"
 "	ret;\n"
-"}\n"
+"}\n";
 void init_arrays(int ni, int nj,
 		DATA_TYPE *alpha,
 		DATA_TYPE *beta,
@@ -254,7 +254,7 @@ void compareResults(int ni, DATA_TYPE POLYBENCH_2D(C, NI, NI, ni, ni), DATA_TYPE
 	// print results
 	printf("Non-Matching CPU-GPU Outputs Beyond Error Threshold of %4.2f Percent: %d\n", PERCENT_DIFF_ERROR_THRESHOLD, fail);
 }
-void syrkCuda(int ni, int nj, DATA_TYPE alpha, DATA_TYPE beta, DATA_TYPE POLYBENCH_2D(A, NI, NJ, ni, nj), DATA_TYPE POLYBENCH_2D(C, NI, NI, ni, ni), 
+void syrkCuda(CUdevice device, int ni, int nj, DATA_TYPE alpha, DATA_TYPE beta, DATA_TYPE POLYBENCH_2D(A, NI, NJ, ni, nj), DATA_TYPE POLYBENCH_2D(C, NI, NI, ni, ni), 
 		DATA_TYPE POLYBENCH_2D(C_outputFromGpu, NI, NI, ni, ni))
 {
     CUdeviceptr A_gpu, C_gpu;
@@ -283,7 +283,6 @@ void syrkCuda(int ni, int nj, DATA_TYPE alpha, DATA_TYPE beta, DATA_TYPE POLYBEN
     fprintf(stdout, "GPU  actual Runtime: %0.6lfms\n", GET_DURING(END, START));
 
     cuError(cuMemcpyDtoH(C_outputFromGpu, C_gpu, sizeof(DATA_TYPE) * NI * NI));
-	cudaMemcpy(C_outputFromGpu, C_gpu, sizeof(DATA_TYPE) * NI * NI, cudaMemcpyDeviceToHost);
 
     cuError(cuMemFree(A_gpu));
     cuError(cuMemFree(C_gpu));

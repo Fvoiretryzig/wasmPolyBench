@@ -451,7 +451,7 @@ void gemver(int n, DATA_TYPE alpha, DATA_TYPE beta, DATA_TYPE POLYBENCH_2D(A, N,
     }
 }
 
-void init(int n, DATA_TYPE *alpha,
+void init(DATA_TYPE *alpha,
           DATA_TYPE *beta,
           DATA_TYPE POLYBENCH_2D(A, N, N, n, n),
           DATA_TYPE POLYBENCH_1D(u1, N, n),
@@ -486,7 +486,7 @@ void init(int n, DATA_TYPE *alpha,
     }
 }
 
-void compareResults(int n, DATA_TYPE POLYBENCH_1D(w1, N, n), DATA_TYPE POLYBENCH_1D(w2, N, n))
+void compareResults( DATA_TYPE POLYBENCH_1D(w1, N, n), DATA_TYPE POLYBENCH_1D(w2, N, n))
 {
     int i, fail;
     fail = 0;
@@ -595,7 +595,7 @@ int main()
     POLYBENCH_1D_ARRAY_DECL(y, DATA_TYPE, N, n);
     POLYBENCH_1D_ARRAY_DECL(z, DATA_TYPE, N, n);
 
-    init(n, &alpha, &beta,
+    init(&alpha, &beta,
          POLYBENCH_ARRAY(A),
          POLYBENCH_ARRAY(u1),
          POLYBENCH_ARRAY(v1),
@@ -637,7 +637,7 @@ int main()
            POLYBENCH_ARRAY(w), POLYBENCH_ARRAY(x), POLYBENCH_ARRAY(y), POLYBENCH_ARRAY(z));
     SET_TIME(CPU_END)
     fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-    compareResults(n, POLYBENCH_ARRAY(w), POLYBENCH_ARRAY(w_outputFromGpu));
+    compareResults(POLYBENCH_ARRAY(w), POLYBENCH_ARRAY(w_outputFromGpu));
 #else
     print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
 #endif // RUN_ON_CPU

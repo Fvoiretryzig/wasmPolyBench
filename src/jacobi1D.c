@@ -14,7 +14,7 @@
 
 //define the error threshold for the results "not matching"
 #define PERCENT_DIFF_ERROR_THRESHOLD 0.05
-
+#define N 4096
 #define RUN_ON_CPU
 
 /*
@@ -123,7 +123,7 @@ static const char *KERNEL_PTX = ".version 6.5\n"
 ""
 "BB1_2:\n"
 "	ret;\n"
-"}\n"
+"}\n";
 void init_array(int n, DATA_TYPE POLYBENCH_1D(A,N,n), DATA_TYPE POLYBENCH_1D(B,N,n))
 {
 	int i;
@@ -220,7 +220,7 @@ void runJacobi1DCUDA(CUdevice device, int tsteps, int n, DATA_TYPE POLYBENCH_1D(
     cuModuleUnload(module);
     cuCtxDestroy(context);
 }
-int main(int argc, char** argv)
+int main()
 {
 	/* Retrieve problem size. */
 	int n = N;

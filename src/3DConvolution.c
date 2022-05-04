@@ -8,7 +8,7 @@
 #include <cuda.h>
 #include <math.h>
 
-#include "atax.h"
+#include "3DConvolution.h"
 #include "polybench.h"
 #include "polybenchUtilFuncts.h"
 #include "cuda-helper.h"
@@ -221,17 +221,14 @@ void convolution3DCuda(CUdevice device, int ni, int nj, int nk, DATA_TYPE POLYBE
 
     cuError(cuModuleGetFunction(&func1, module, "_Z20convolution3D_kerneliiiPfS_i"));
 	
-    unsigned grid_x = (size_t)(ceil( ((float)NK) / ((float)DIM_THREAD_BLOCK_X) );
-    unsigned grid_y = (size_t)(ceil( ((float)NJ) / ((float)DIM_THREAD_BLOCK_Y) ));
-	
-    
+	unsigned grid_x = (size_t)(ceil( ((float)NK) / ((float)DIM_THREAD_BLOCK_X) ));
+	unsigned grid_y = (size_t)(ceil( ((float)NJ) / ((float)DIM_THREAD_BLOCK_Y) ));
     SET_TIME(START)
 	int i;
 	for (i = 1; i < _PB_NI - 1; ++i) // 0
 	{
         void *args1[] = {&ni, &nj, &nk, &A_gpu, &B_gpu, &i, NULL};
         cuError(cuLaunchKernel(func1, grid_x, grid_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
-		convolution3D_kernel<<< grid, block >>>(ni, nj, nk, A_gpu, B_gpu, i);
 	}
     SET_TIME(END)
     fprintf(stdout, "GPU  actual Runtime: %0.6lfms\n", GET_DURING(END, START));

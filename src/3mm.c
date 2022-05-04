@@ -641,10 +641,6 @@ void mm3Cuda(CUdevice device, int ni, int nj, int nk, int nl, int nm,
     unsigned grid3_x = (size_t)(ceil(((float)NL) / ((float)DIM_THREAD_BLOCK_X)));
     unsigned grid3_y = (size_t)(ceil((float)NI / ((float)DIM_THREAD_BLOCK_Y)));
 
-    dim3 block(DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y);
-    dim3 grid1((size_t)(ceil(((float)NJ) / ((float)DIM_THREAD_BLOCK_X))), (size_t)(ceil((float)NI / ((float)DIM_THREAD_BLOCK_Y))));
-    dim3 grid2((size_t)(ceil(((float)NL) / ((float)DIM_THREAD_BLOCK_X))), (size_t)(ceil((float)NJ / ((float)DIM_THREAD_BLOCK_Y))));
-    dim3 grid3((size_t)(ceil(((float)NL) / ((float)DIM_THREAD_BLOCK_X))), (size_t)(ceil((float)NI / ((float)DIM_THREAD_BLOCK_Y))));
 
     /* Start timer. */
     polybench_start_instruments;
@@ -671,7 +667,7 @@ void mm3Cuda(CUdevice device, int ni, int nj, int nk, int nl, int nm,
     cuCtxDestroy(context);
 }
 
-int main(int argc, char **argv)
+int main()
 {
     int ni = NI;
     int nj = NJ;
