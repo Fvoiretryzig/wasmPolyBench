@@ -148,10 +148,9 @@ static const char *KERNEL_PTX = ".version 6.5\n"
                                 ""
                                 "BB1_2:\n"
                                 "	ret;\n"
-                                "}\n"
+                                "}\n";
 
-    void
-    init_array(int n, DATA_TYPE POLYBENCH_2D(A, N, N, n, n), DATA_TYPE POLYBENCH_2D(B, N, N, n, n))
+void init_array(int n, DATA_TYPE POLYBENCH_2D(A, N, N, n, n), DATA_TYPE POLYBENCH_2D(B, N, N, n, n))
 {
     int i, j;
 
@@ -218,7 +217,7 @@ void compareResults(int n, DATA_TYPE POLYBENCH_2D(a, N, N, n, n), DATA_TYPE POLY
     printf("Non-Matching CPU-GPU Outputs Beyond Error Threshold of %4.2f Percent: %d\n", PERCENT_DIFF_ERROR_THRESHOLD, fail);
 }
 
-void runJacobi2DCUDA(CUdevice device, int tsteps, int n, DATA_TYPE POLYBENCH_2D(A,N,N,n,n), DATA_TYPE POLYBENCH_2D(B,N,N,n,n), DATA_TYPE POLYBENCH_2D(A_outputFromGpu,N,N,n,n), DATA_TYPE POLYBENCH_2D(B_outputFromGpu,N,N,n,n))
+void runJacobi2DCUDA(CUdevice device, int tsteps, int n, DATA_TYPE POLYBENCH_2D(A, N, N, n, n), DATA_TYPE POLYBENCH_2D(B, N, N, n, n), DATA_TYPE POLYBENCH_2D(A_outputFromGpu, N, N, n, n), DATA_TYPE POLYBENCH_2D(B_outputFromGpu, N, N, n, n))
 {
     CUdeviceptr A_gpu, Bgpu;
     CUcontext context = NULL;
@@ -236,26 +235,25 @@ void runJacobi2DCUDA(CUdevice device, int tsteps, int n, DATA_TYPE POLYBENCH_2D(
     cuError(cuModuleGetFunction(&func1, module, "_Z21runJacobiCUDA_kernel1iPfS_"));
     cuError(cuModuleGetFunction(&func2, module, "_Z21runJacobiCUDA_kernel2iPfS_"));
 
-    unsigned grid_x = (unsigned int)ceil( ((float)N) / ((float)DIM_THREAD_BLOCK_X) );
-    unsigned grid_y = (unsigned int)ceil( ((float)N) / ((float)DIM_THREAD_BLOCK_Y) );
+    unsigned grid_x = (unsigned int)ceil(((float)N) / ((float)DIM_THREAD_BLOCK_X));
+    unsigned grid_y = (unsigned int)ceil(((float)N) / ((float)DIM_THREAD_BLOCK_Y));
 
+    dim3 block(DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y);
+    dim3 grid((unsigned int)ceil(((float)N) / ((float)block.x)), (unsigned int)ceil(((float)N) / ((float)block.y)));
 
-	dim3 block(DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y);
-	dim3 grid((unsigned int)ceil( ((float)N) / ((float)block.x) ), (unsigned int)ceil( ((float)N) / ((float)block.y) ));
-	
     SET_TIME(START)
     cuError(cuLaunchKernel(func1, grid1_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
     cuError(cuLaunchKernel(func2, grid2_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args2, NULL));
-    void *args1[] ={&n, &Agpu, &Bgpu, NULL};
-	for (int t = 0; t < _PB_TSTEPS; t++)
-	{
-		cuError(cuLaunchKernel(func1, grid1_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
+    void *args1[] = {&n, &Agpu, &Bgpu, NULL};
+    for (int t = 0; t < _PB_TSTEPS; t++)
+    {
+        cuError(cuLaunchKernel(func1, grid1_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
         cuError(cuLaunchKernel(func2, grid2_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
-	}
+    }
     SET_TIME(END)
     fprintf(stdout, "GPU  actual Runtime: %0.6lfms\n", GET_DURING(END, START));
-	
-	cuError(cuMemcpyDtoH(A_outputFromGpu, Agpu, sizeof(DATA_TYPE) * N * N));
+
+    cuError(cuMemcpyDtoH(A_outputFromGpu, Agpu, sizeof(DATA_TYPE) * N * N));
     cuError(cuMemcpyDtoH(B_outputFromGpu, Bgpu, sizeof(DATA_TYPE) * N * N));
 
     cuError(cuMemFree(Agpu));
@@ -265,27 +263,27 @@ void runJacobi2DCUDA(CUdevice device, int tsteps, int n, DATA_TYPE POLYBENCH_2D(
 }
 int main()
 {
-	/* Retrieve problem size. */
-	int n = N;
-	int tsteps = TSTEPS;
+    /* Retrieve problem size. */
+    int n = N;
+    int tsteps = TSTEPS;
 
-	POLYBENCH_2D_ARRAY_DECL(a,DATA_TYPE,N,N,n,n);
-	POLYBENCH_2D_ARRAY_DECL(b,DATA_TYPE,N,N,n,n);
-	POLYBENCH_2D_ARRAY_DECL(a_outputFromGpu,DATA_TYPE,N,N,n,n);
-	POLYBENCH_2D_ARRAY_DECL(b_outputFromGpu,DATA_TYPE,N,N,n,n);
+    POLYBENCH_2D_ARRAY_DECL(a, DATA_TYPE, N, N, n, n);
+    POLYBENCH_2D_ARRAY_DECL(b, DATA_TYPE, N, N, n, n);
+    POLYBENCH_2D_ARRAY_DECL(a_outputFromGpu, DATA_TYPE, N, N, n, n);
+    POLYBENCH_2D_ARRAY_DECL(b_outputFromGpu, DATA_TYPE, N, N, n, n);
 
-	init_array(n, POLYBENCH_ARRAY(a), POLYBENCH_ARRAY(b));
-	
-    
+    init_array(n, POLYBENCH_ARRAY(a), POLYBENCH_ARRAY(b));
+
     int deviceCount = 0;
     CUdevice device = 0;
-	char name[GPU_DEVICE_NAME_SIZE];
+    char name[GPU_DEVICE_NAME_SIZE];
 
     cuError(cuInit(0));
     cuError(cuDeviceGetCount(&deviceCount));
     fprintf(stdout, "GPU device count = %d\n", deviceCount);
 
-    for (int i = 0; i < deviceCount; ++i) {
+    for (int i = 0; i < deviceCount; ++i)
+    {
         fprintf(stdout, "\nTesting atax on GPU device %d ...\n", i);
 
         cuError(cuDeviceGet(&device, i));
@@ -299,23 +297,23 @@ int main()
         fprintf(stdout, "GPU  total Runtime: %0.6lfms\n", GET_DURING(GPU_END, GPU_START));
         fprintf(stdout, "Test atax on GPU device %d Success\n", i);
     }
-	#ifdef RUN_ON_CPU
-	  	polybench_start_instruments;
-        SET_TIME(CPU_START)
-		runJacobi2DCpu(tsteps, n, POLYBENCH_ARRAY(a), POLYBENCH_ARRAY(b));
-        SET_TIME(CPU_END)
-        fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-		compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
-	#else
-		print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
-	#endif //RUN_ON_CPU
+#ifdef RUN_ON_CPU
+    polybench_start_instruments;
+    SET_TIME(CPU_START)
+    runJacobi2DCpu(tsteps, n, POLYBENCH_ARRAY(a), POLYBENCH_ARRAY(b));
+    SET_TIME(CPU_END)
+    fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
+    compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+#else
+    print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
+#endif // RUN_ON_CPU
 
-	POLYBENCH_FREE_ARRAY(a);
-	POLYBENCH_FREE_ARRAY(a_outputFromGpu);
-	POLYBENCH_FREE_ARRAY(b);
-	POLYBENCH_FREE_ARRAY(b_outputFromGpu);
+    POLYBENCH_FREE_ARRAY(a);
+    POLYBENCH_FREE_ARRAY(a_outputFromGpu);
+    POLYBENCH_FREE_ARRAY(b);
+    POLYBENCH_FREE_ARRAY(b_outputFromGpu);
 
-	return 0;
+    return 0;
 }
 
 #include "../include/polybench.c"

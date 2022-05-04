@@ -192,10 +192,9 @@ static const char *KERNEL_PTX = ".version 6.5\n"
                                 ""
                                 "BB0_11:\n"
                                 "	ret;\n"
-                                "}\n"
-                                "" void
-                                gemm(int ni, int nj, int nk, DATA_TYPE alpha, DATA_TYPE beta, DATA_TYPE POLYBENCH_2D(A, NI, NK, ni, nk),
-                                     DATA_TYPE POLYBENCH_2D(B, NK, NJ, nk, nj), DATA_TYPE POLYBENCH_2D(C, NI, NJ, ni, nj))
+                                "}\n";
+void gemm(int ni, int nj, int nk, DATA_TYPE alpha, DATA_TYPE beta, DATA_TYPE POLYBENCH_2D(A, NI, NK, ni, nk),
+          DATA_TYPE POLYBENCH_2D(B, NK, NJ, nk, nj), DATA_TYPE POLYBENCH_2D(C, NI, NJ, ni, nj))
 {
     int i, j, k;
 
@@ -266,8 +265,8 @@ void compareResults(int ni, int nj, DATA_TYPE POLYBENCH_2D(C, NI, NJ, ni, nj), D
     // Print results
     printf("Non-Matching CPU-GPU Outputs Beyond Error Threshold of %4.2f Percent: %d\n", PERCENT_DIFF_ERROR_THRESHOLD, fail);
 }
-void gemmCuda(CUdevice device, int ni, int nj, int nk, DATA_TYPE alpha, DATA_TYPE beta, DATA_TYPE POLYBENCH_2D(A,NI,NK,ni,nk), 
-	DATA_TYPE POLYBENCH_2D(B,NK,NJ,nk,nj), DATA_TYPE POLYBENCH_2D(C,NI,NJ,ni,nj), DATA_TYPE POLYBENCH_2D(C_outputFromGpu,NI,NJ,ni,nj))
+void gemmCuda(CUdevice device, int ni, int nj, int nk, DATA_TYPE alpha, DATA_TYPE beta, DATA_TYPE POLYBENCH_2D(A, NI, NK, ni, nk),
+              DATA_TYPE POLYBENCH_2D(B, NK, NJ, nk, nj), DATA_TYPE POLYBENCH_2D(C, NI, NJ, ni, nj), DATA_TYPE POLYBENCH_2D(C_outputFromGpu, NI, NJ, ni, nj))
 {
     CUdeviceptr A_gpu, B_gpu, C_gpu;
     CUcontext context = NULL;
@@ -281,7 +280,7 @@ void gemmCuda(CUdevice device, int ni, int nj, int nk, DATA_TYPE alpha, DATA_TYP
     cuError(cuMemcpyHtoD(A_gpu, A, sizeof(DATA_TYPE) * NI * NK));
     cuError(cuMemcpyHtoD(B_gpu, B, sizeof(DATA_TYPE) * NK * NJ));
     cuError(cuMemcpyHtoD(C_gpu, C, sizeof(DATA_TYPE) * NI * NJ));
-	
+
     cuError(cuModuleLoadData(&module, KERNEL_PTX));
 
     cuError(cuModuleGetFunction(&func1, module, "_Z11gemm_kerneliiiffPfS_S_"));
@@ -307,30 +306,31 @@ void gemmCuda(CUdevice device, int ni, int nj, int nk, DATA_TYPE alpha, DATA_TYP
 }
 int main()
 {
-	/* Retrieve problem size. */
-	int ni = NI;
-	int nj = NJ;
-	int nk = NK;
+    /* Retrieve problem size. */
+    int ni = NI;
+    int nj = NJ;
+    int nk = NK;
 
-	/* Variable declaration/allocation. */
-	DATA_TYPE alpha;
-	DATA_TYPE beta;
-	POLYBENCH_2D_ARRAY_DECL(A,DATA_TYPE,NI,NK,ni,nk);
-	POLYBENCH_2D_ARRAY_DECL(B,DATA_TYPE,NK,NJ,nk,nj);
-	POLYBENCH_2D_ARRAY_DECL(C,DATA_TYPE,NI,NJ,ni,nj);
-	POLYBENCH_2D_ARRAY_DECL(C_outputFromGpu,DATA_TYPE,NI,NJ,ni,nj);
+    /* Variable declaration/allocation. */
+    DATA_TYPE alpha;
+    DATA_TYPE beta;
+    POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, NI, NK, ni, nk);
+    POLYBENCH_2D_ARRAY_DECL(B, DATA_TYPE, NK, NJ, nk, nj);
+    POLYBENCH_2D_ARRAY_DECL(C, DATA_TYPE, NI, NJ, ni, nj);
+    POLYBENCH_2D_ARRAY_DECL(C_outputFromGpu, DATA_TYPE, NI, NJ, ni, nj);
 
-	init(ni, nj, nk, &alpha, &beta, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(C));
-	
+    init(ni, nj, nk, &alpha, &beta, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(C));
+
     int deviceCount = 0;
     CUdevice device = 0;
-	char name[GPU_DEVICE_NAME_SIZE];
+    char name[GPU_DEVICE_NAME_SIZE];
 
     cuError(cuInit(0));
     cuError(cuDeviceGetCount(&deviceCount));
     fprintf(stdout, "GPU device count = %d\n", deviceCount);
 
-    for (int i = 0; i < deviceCount; ++i) {
+    for (int i = 0; i < deviceCount; ++i)
+    {
         fprintf(stdout, "\nTesting gemm on GPU device %d ...\n", i);
 
         cuError(cuDeviceGet(&device, i));
@@ -344,23 +344,23 @@ int main()
         fprintf(stdout, "GPU  total Runtime: %0.6lfms\n", GET_DURING(GPU_END, GPU_START));
         fprintf(stdout, "Test gemm on GPU device %d Success\n", i);
     }
-	#ifdef RUN_ON_CPU
-	  	polybench_start_instruments;
-        SET_TIME(CPU_START)
-		gemm(ni, nj, nk, alpha, beta, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(C));
-        SET_TIME(CPU_END)
-        fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-		compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
-	#else
-		print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
-	#endif //RUN_ON_CPU
+#ifdef RUN_ON_CPU
+    polybench_start_instruments;
+    SET_TIME(CPU_START)
+    gemm(ni, nj, nk, alpha, beta, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(C));
+    SET_TIME(CPU_END)
+    fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
+    compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+#else
+    print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
+#endif // RUN_ON_CPU
 
-	POLYBENCH_FREE_ARRAY(A);
-	POLYBENCH_FREE_ARRAY(B);  
-	POLYBENCH_FREE_ARRAY(C);  
-	POLYBENCH_FREE_ARRAY(C_outputFromGpu); 
+    POLYBENCH_FREE_ARRAY(A);
+    POLYBENCH_FREE_ARRAY(B);
+    POLYBENCH_FREE_ARRAY(C);
+    POLYBENCH_FREE_ARRAY(C_outputFromGpu);
 
-    	return 0;
+    return 0;
 }
 
 #include "../include/polybench.c"

@@ -188,13 +188,14 @@ static const char *KERNEL_PTX = ".version 6.5\n"
                                 ""
                                 "BB0_3:\n"
                                 "	ret;\n"
-                                "}\n" void
-                                init_arrays(int ni, int nj,
-                                            DATA_TYPE *alpha,
-                                            DATA_TYPE *beta,
-                                            DATA_TYPE POLYBENCH_2D(A, NI, NJ, ni, nj),
-                                            DATA_TYPE POLYBENCH_2D(B, NI, NJ, ni, nj),
-                                            DATA_TYPE POLYBENCH_2D(C, NI, NI, ni, ni))
+                                "}\n";
+
+void init_arrays(int ni, int nj,
+                 DATA_TYPE *alpha,
+                 DATA_TYPE *beta,
+                 DATA_TYPE POLYBENCH_2D(A, NI, NJ, ni, nj),
+                 DATA_TYPE POLYBENCH_2D(B, NI, NJ, ni, nj),
+                 DATA_TYPE POLYBENCH_2D(C, NI, NI, ni, ni))
 {
     int i, j;
 
@@ -271,8 +272,8 @@ void compareResults(int ni, DATA_TYPE POLYBENCH_2D(C, NI, NI, ni, ni), DATA_TYPE
     printf("Non-Matching CPU-GPU Outputs Beyond Error Threshold of %4.2f Percent: %d\n", PERCENT_DIFF_ERROR_THRESHOLD, fail);
 }
 
-void syr2kCuda(CUdevice device, int ni, int nj, DATA_TYPE alpha, DATA_TYPE beta, DATA_TYPE POLYBENCH_2D(A, NI, NJ, ni, nj), DATA_TYPE POLYBENCH_2D(B, NI, NJ, ni, nj), 
-		DATA_TYPE POLYBENCH_2D(C, NI, NI, ni, ni), DATA_TYPE POLYBENCH_2D(C_outputFromGpu, NI, NI, ni, ni)) 
+void syr2kCuda(CUdevice device, int ni, int nj, DATA_TYPE alpha, DATA_TYPE beta, DATA_TYPE POLYBENCH_2D(A, NI, NJ, ni, nj), DATA_TYPE POLYBENCH_2D(B, NI, NJ, ni, nj),
+               DATA_TYPE POLYBENCH_2D(C, NI, NI, ni, ni), DATA_TYPE POLYBENCH_2D(C_outputFromGpu, NI, NI, ni, ni))
 {
     CUdeviceptr A_gpu, B_gpu, C_gpu;
 
@@ -292,15 +293,15 @@ void syr2kCuda(CUdevice device, int ni, int nj, DATA_TYPE alpha, DATA_TYPE beta,
 
     cuError(cuModuleGetFunction(&func1, module, "_Z12syr2k_kerneliiffPfS_S_"));
 
-    unsigned grid_x = (size_t)ceil( ((float)NI) / ((float)DIM_THREAD_BLOCK_X) );
-    unsigned grid_y = (size_t)ceil( ((float)NI) / ((float)DIM_THREAD_BLOCK_Y) );
+    unsigned grid_x = (size_t)ceil(((float)NI) / ((float)DIM_THREAD_BLOCK_X));
+    unsigned grid_y = (size_t)ceil(((float)NI) / ((float)DIM_THREAD_BLOCK_Y));
     void *args1[] = {&ni, &nj, &alpha, &beta, &A_gpu, &B_gpu, &C_gpu, NULL};
 
     SET_TIME(START)
     cuError(cuLaunchKernel(func1, grid_x, grid_y, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
     SET_TIME(END)
     fprintf(stdout, "GPU  actual Runtime: %0.6lfms\n", GET_DURING(END, START));
-	
+
     cuError(cuMemcpyDtoH(C_outputFromGpu, C_gpu, sizeof(DATA_TYPE) * NI * NI));
 
     cuError(cuMemFree(A_gpu));
@@ -311,29 +312,30 @@ void syr2kCuda(CUdevice device, int ni, int nj, DATA_TYPE alpha, DATA_TYPE beta,
 }
 int main()
 {
-	/* Retrieve problem size. */
-	int ni = NI;
-	int nj = NJ;
+    /* Retrieve problem size. */
+    int ni = NI;
+    int nj = NJ;
 
-	/* Variable declaration/allocation. */
-	DATA_TYPE alpha;
-	DATA_TYPE beta;
-	POLYBENCH_2D_ARRAY_DECL(A,DATA_TYPE,NI,NJ,ni,nj);
-	POLYBENCH_2D_ARRAY_DECL(B,DATA_TYPE,NI,NJ,ni,nj);
-	POLYBENCH_2D_ARRAY_DECL(C,DATA_TYPE,NI,NI,ni,ni);
-	POLYBENCH_2D_ARRAY_DECL(C_outputFromGpu,DATA_TYPE,NI,NI,ni,ni);
+    /* Variable declaration/allocation. */
+    DATA_TYPE alpha;
+    DATA_TYPE beta;
+    POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, NI, NJ, ni, nj);
+    POLYBENCH_2D_ARRAY_DECL(B, DATA_TYPE, NI, NJ, ni, nj);
+    POLYBENCH_2D_ARRAY_DECL(C, DATA_TYPE, NI, NI, ni, ni);
+    POLYBENCH_2D_ARRAY_DECL(C_outputFromGpu, DATA_TYPE, NI, NI, ni, ni);
 
-	init_arrays(ni, nj, &alpha, &beta, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(C));
-    
+    init_arrays(ni, nj, &alpha, &beta, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(C));
+
     int deviceCount = 0;
     CUdevice device = 0;
-	char name[GPU_DEVICE_NAME_SIZE];
+    char name[GPU_DEVICE_NAME_SIZE];
 
     cuError(cuInit(0));
     cuError(cuDeviceGetCount(&deviceCount));
     fprintf(stdout, "GPU device count = %d\n", deviceCount);
 
-    for (int i = 0; i < deviceCount; ++i) {
+    for (int i = 0; i < deviceCount; ++i)
+    {
         fprintf(stdout, "\nTesting syr2k on GPU device %d ...\n", i);
 
         cuError(cuDeviceGet(&device, i));
@@ -347,23 +349,23 @@ int main()
         fprintf(stdout, "GPU  total Runtime: %0.6lfms\n", GET_DURING(GPU_END, GPU_START));
         fprintf(stdout, "Test syr2k on GPU device %d Success\n", i);
     }
-	#ifdef RUN_ON_CPU
-	  	polybench_start_instruments;
-        SET_TIME(CPU_START)
-		syr2kCpu(ni, nj, alpha, beta, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(C));        
-        SET_TIME(CPU_END)
-        fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-		compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
-	#else
-		print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
-	#endif //RUN_ON_CPU
+#ifdef RUN_ON_CPU
+    polybench_start_instruments;
+    SET_TIME(CPU_START)
+    syr2kCpu(ni, nj, alpha, beta, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(C));
+    SET_TIME(CPU_END)
+    fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
+    compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+#else
+    print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
+#endif // RUN_ON_CPU
 
-	POLYBENCH_FREE_ARRAY(A);
-	POLYBENCH_FREE_ARRAY(B);
-	POLYBENCH_FREE_ARRAY(C);
-	POLYBENCH_FREE_ARRAY(C_outputFromGpu);
+    POLYBENCH_FREE_ARRAY(A);
+    POLYBENCH_FREE_ARRAY(B);
+    POLYBENCH_FREE_ARRAY(C);
+    POLYBENCH_FREE_ARRAY(C_outputFromGpu);
 
-  	return 0;
+    return 0;
 }
 
 #include "../include/polybench.c"

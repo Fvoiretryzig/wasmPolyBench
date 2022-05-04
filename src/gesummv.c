@@ -222,9 +222,9 @@ static const char *KERNEL_PTX = ".version 6.5\n"
                                 ""
                                 "BB0_12:\n"
                                 "	ret;\n"
-                                "}\n" void
-                                gesummv(int n, DATA_TYPE alpha, DATA_TYPE beta, DATA_TYPE POLYBENCH_2D(A, N, N, n, n), DATA_TYPE POLYBENCH_2D(B, N, N, n, n), DATA_TYPE POLYBENCH_1D(tmp, N, n),
-                                        DATA_TYPE POLYBENCH_1D(x, N, n), DATA_TYPE POLYBENCH_1D(y, N, n))
+                                "}\n";
+void gesummv(int n, DATA_TYPE alpha, DATA_TYPE beta, DATA_TYPE POLYBENCH_2D(A, N, N, n, n), DATA_TYPE POLYBENCH_2D(B, N, N, n, n), DATA_TYPE POLYBENCH_1D(tmp, N, n),
+             DATA_TYPE POLYBENCH_1D(x, N, n), DATA_TYPE POLYBENCH_1D(y, N, n))
 {
     int i, j;
 
@@ -279,9 +279,9 @@ void compareResults(int n, DATA_TYPE POLYBENCH_1D(y, N, n), DATA_TYPE POLYBENCH_
     printf("Non-Matching CPU-GPU Outputs Beyond Error Threshold of %4.2f Percent: %d\n", PERCENT_DIFF_ERROR_THRESHOLD, fail);
 }
 
-void gesummvCuda(CUdevice device, int n, DATA_TYPE alpha, DATA_TYPE beta, DATA_TYPE POLYBENCH_2D(A,N,N,n,n), DATA_TYPE POLYBENCH_2D(B,N,N,n,n), 
-		DATA_TYPE POLYBENCH_1D(tmp,N,n), DATA_TYPE POLYBENCH_1D(x,N,n), DATA_TYPE POLYBENCH_1D(y,N,n),  
-		DATA_TYPE POLYBENCH_1D(y_outputFromGpu,N,n))
+void gesummvCuda(CUdevice device, int n, DATA_TYPE alpha, DATA_TYPE beta, DATA_TYPE POLYBENCH_2D(A, N, N, n, n), DATA_TYPE POLYBENCH_2D(B, N, N, n, n),
+                 DATA_TYPE POLYBENCH_1D(tmp, N, n), DATA_TYPE POLYBENCH_1D(x, N, n), DATA_TYPE POLYBENCH_1D(y, N, n),
+                 DATA_TYPE POLYBENCH_1D(y_outputFromGpu, N, n))
 {
     CUdeviceptr A_gpu, B_gpu, x_gpu, y_gpu, tmp_gpu;
     CUcontext context = NULL;
@@ -305,8 +305,8 @@ void gesummvCuda(CUdevice device, int n, DATA_TYPE alpha, DATA_TYPE beta, DATA_T
     cuError(cuModuleLoadData(&module, KERNEL_PTX));
 
     cuError(cuModuleGetFunction(&func1, module, "_Z14gesummv_kerneliffPfS_S_S_S_"));
-    
-    unsigned grid_x = (unsigned int)ceil( ((float)N) / ((float)DIM_THREAD_BLOCK_X) );
+
+    unsigned grid_x = (unsigned int)ceil(((float)N) / ((float)DIM_THREAD_BLOCK_X));
     void *args1 = {&n, &alpha, &beta, &A_gpu, &B_gpu, &tmp_gpu, &x_gpu, &y_gpu, NULL};
 
     SET_TIME(START)
@@ -325,30 +325,31 @@ void gesummvCuda(CUdevice device, int n, DATA_TYPE alpha, DATA_TYPE beta, DATA_T
 }
 int main()
 {
-	/* Retrieve problem size. */
-	int n = N;
+    /* Retrieve problem size. */
+    int n = N;
 
-	/* Variable declaration/allocation. */
-	DATA_TYPE alpha;
-	DATA_TYPE beta;
-	POLYBENCH_2D_ARRAY_DECL(A,DATA_TYPE,N,N,n,n);
-	POLYBENCH_2D_ARRAY_DECL(B,DATA_TYPE,N,N,n,n);
-	POLYBENCH_1D_ARRAY_DECL(tmp,DATA_TYPE,N,n);
-	POLYBENCH_1D_ARRAY_DECL(x,DATA_TYPE,N,n);
-	POLYBENCH_1D_ARRAY_DECL(y,DATA_TYPE,N,n);
-	POLYBENCH_1D_ARRAY_DECL(y_outputFromGpu,DATA_TYPE,N,n);
+    /* Variable declaration/allocation. */
+    DATA_TYPE alpha;
+    DATA_TYPE beta;
+    POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, N, N, n, n);
+    POLYBENCH_2D_ARRAY_DECL(B, DATA_TYPE, N, N, n, n);
+    POLYBENCH_1D_ARRAY_DECL(tmp, DATA_TYPE, N, n);
+    POLYBENCH_1D_ARRAY_DECL(x, DATA_TYPE, N, n);
+    POLYBENCH_1D_ARRAY_DECL(y, DATA_TYPE, N, n);
+    POLYBENCH_1D_ARRAY_DECL(y_outputFromGpu, DATA_TYPE, N, n);
 
-	init(n, &alpha, &beta, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(x));
-	
+    init(n, &alpha, &beta, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(x));
+
     int deviceCount = 0;
     CUdevice device = 0;
-	char name[GPU_DEVICE_NAME_SIZE];
+    char name[GPU_DEVICE_NAME_SIZE];
 
     cuError(cuInit(0));
     cuError(cuDeviceGetCount(&deviceCount));
     fprintf(stdout, "GPU device count = %d\n", deviceCount);
 
-    for (int i = 0; i < deviceCount; ++i) {
+    for (int i = 0; i < deviceCount; ++i)
+    {
         fprintf(stdout, "\nTesting gesummv on GPU device %d ...\n", i);
 
         cuError(cuDeviceGet(&device, i));
@@ -357,30 +358,30 @@ int main()
         fprintf(stdout, "  GPU device name is: '%s'\n", name);
 
         SET_TIME(GPU_START)
-        gesummvCuda(device, n, alpha, beta, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(tmp), POLYBENCH_ARRAY(x), POLYBENCH_ARRAY(y),  POLYBENCH_ARRAY(y_outputFromGpu));
+        gesummvCuda(device, n, alpha, beta, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(tmp), POLYBENCH_ARRAY(x), POLYBENCH_ARRAY(y), POLYBENCH_ARRAY(y_outputFromGpu));
         SET_TIME(GPU_END)
         fprintf(stdout, "GPU  total Runtime: %0.6lfms\n", GET_DURING(GPU_END, GPU_START));
         fprintf(stdout, "Test gesummv on GPU device %d Success\n", i);
     }
-	#ifdef RUN_ON_CPU
-	  	polybench_start_instruments;
-        SET_TIME(CPU_START)
-		gesummv(n, alpha, beta, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(tmp), POLYBENCH_ARRAY(x), POLYBENCH_ARRAY(y));
-        SET_TIME(CPU_END)
-        fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-		compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
-	#else
-		print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
-	#endif //RUN_ON_CPU
+#ifdef RUN_ON_CPU
+    polybench_start_instruments;
+    SET_TIME(CPU_START)
+    gesummv(n, alpha, beta, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(tmp), POLYBENCH_ARRAY(x), POLYBENCH_ARRAY(y));
+    SET_TIME(CPU_END)
+    fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
+    compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+#else
+    print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
+#endif // RUN_ON_CPU
 
-	POLYBENCH_FREE_ARRAY(A);
-	POLYBENCH_FREE_ARRAY(B);  
-	POLYBENCH_FREE_ARRAY(tmp);
-	POLYBENCH_FREE_ARRAY(x);  
-	POLYBENCH_FREE_ARRAY(y);
-	POLYBENCH_FREE_ARRAY(y_outputFromGpu);
+    POLYBENCH_FREE_ARRAY(A);
+    POLYBENCH_FREE_ARRAY(B);
+    POLYBENCH_FREE_ARRAY(tmp);
+    POLYBENCH_FREE_ARRAY(x);
+    POLYBENCH_FREE_ARRAY(y);
+    POLYBENCH_FREE_ARRAY(y_outputFromGpu);
 
-	return 0;
+    return 0;
 }
 
 #include "../include/polybench.c"

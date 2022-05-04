@@ -141,8 +141,8 @@ static const char *KERNEL_PTX = ".version 6.5\n"
                                 ""
                                 "BB1_2:\n"
                                 "	ret;\n"
-                                "}\n" void
-                                lu(int n, DATA_TYPE POLYBENCH_2D(A, N, N, n, n))
+                                "}\n";
+void lu(int n, DATA_TYPE POLYBENCH_2D(A, N, N, n, n))
 {
     for (int k = 0; k < _PB_N; k++)
     {
@@ -195,7 +195,7 @@ void compareResults(int n, DATA_TYPE POLYBENCH_2D(A_cpu, N, N, n, n), DATA_TYPE 
     printf("Non-Matching CPU-GPU Outputs Beyond Error Threshold of %4.2f Percent: %d\n", PERCENT_DIFF_ERROR_THRESHOLD, fail);
 }
 
-void luCuda(CUdevice device, int n, DATA_TYPE POLYBENCH_2D(A,N,N,n,n), DATA_TYPE POLYBENCH_2D(A_outputFromGpu,N,N,n,n))
+void luCuda(CUdevice device, int n, DATA_TYPE POLYBENCH_2D(A, N, N, n, n), DATA_TYPE POLYBENCH_2D(A_outputFromGpu, N, N, n, n))
 {
     CUdeviceptr AGpu;
 
@@ -203,7 +203,7 @@ void luCuda(CUdevice device, int n, DATA_TYPE POLYBENCH_2D(A,N,N,n,n), DATA_TYPE
     CUmodule module = NULL;
     CUfunction func1 = NULL, func2 = NULL
 
-    cuError(cuCtxCreate(&context, 0, device));
+                                 cuError(cuCtxCreate(&context, 0, device));
     cuError(cuMemAlloc(&AGpu, N * N * sizeof(DATA_TYPE)));
     cuError(cuMemcpyHtoD(AGpu, A, N * N * sizeof(DATA_TYPE)));
 
@@ -212,14 +212,14 @@ void luCuda(CUdevice device, int n, DATA_TYPE POLYBENCH_2D(A,N,N,n,n), DATA_TYPE
     cuError(cuModuleGetFunction(&func1, module, "_Z10lu_kernel1iPfi"));
     cuError(cuModuleGetFunction(&func2, module, "_Z10lu_kernel2iPfi"));
 
-	dim3 block1(DIM_THREAD_BLOCK_KERNEL_1_X, DIM_THREAD_BLOCK_KERNEL_1_Y);
-	dim3 block2(DIM_THREAD_BLOCK_KERNEL_2_X, DIM_THREAD_BLOCK_KERNEL_2_Y);
-	dim3 grid1(1, 1, 1);
-	dim3 grid2(1, 1, 1);
+    dim3 block1(DIM_THREAD_BLOCK_KERNEL_1_X, DIM_THREAD_BLOCK_KERNEL_1_Y);
+    dim3 block2(DIM_THREAD_BLOCK_KERNEL_2_X, DIM_THREAD_BLOCK_KERNEL_2_Y);
+    dim3 grid1(1, 1, 1);
+    dim3 grid2(1, 1, 1);
 
     SET_TIME(START)
-	for (int k = 0; k < N; k++)
-	{  
+    for (int k = 0; k < N; k++)
+    {
         void *args1[] = {&n, &AGpu, &k, NULL};
         unsigned grid1_x = (unsigned int)(ceil((float)(N - (k + 1)) / ((float)DIM_THREAD_BLOCK_KERNEL_1_X)));
         cuError(cuLaunchKernel(func1, grid1_x, 1, 1, DIM_THREAD_BLOCK_KERNEL_1_X, DIM_THREAD_BLOCK_KERNEL_1_Y, 1, 0, NULL, args1, NULL));
@@ -228,8 +228,8 @@ void luCuda(CUdevice device, int n, DATA_TYPE POLYBENCH_2D(A,N,N,n,n), DATA_TYPE
         unsigned grid2_y = (unsigned int)(ceil((float)(N - (k + 1)) / ((float)DIM_THREAD_BLOCK_KERNEL_2_Y)));
 
         cuError(cuLaunchKernel(func2, grid2_x, grid2_y, 1, DIM_THREAD_BLOCK_KERNEL_2_X, DIM_THREAD_BLOCK_KERNEL_2_Y, 1, 0, NULL, args1, NULL));
-	}
-	SET_TIME(END)
+    }
+    SET_TIME(END)
     fprintf(stdout, "GPU  actual Runtime: %0.6lfms\n", GET_DURING(END, START));
 
     cuError(cuMemcpyDtoH(A_outputFromGpu, AGpu, N * N * sizeof(DATA_TYPE)));
@@ -240,22 +240,23 @@ void luCuda(CUdevice device, int n, DATA_TYPE POLYBENCH_2D(A,N,N,n,n), DATA_TYPE
 
 int main()
 {
-	int n = N;
+    int n = N;
 
-	POLYBENCH_2D_ARRAY_DECL(A,DATA_TYPE,N,N,n,n);
-  	POLYBENCH_2D_ARRAY_DECL(A_outputFromGpu,DATA_TYPE,N,N,n,n);
+    POLYBENCH_2D_ARRAY_DECL(A, DATA_TYPE, N, N, n, n);
+    POLYBENCH_2D_ARRAY_DECL(A_outputFromGpu, DATA_TYPE, N, N, n, n);
 
-	init_array(n, POLYBENCH_ARRAY(A));
+    init_array(n, POLYBENCH_ARRAY(A));
 
     int deviceCount = 0;
     CUdevice device = 0;
-	char name[GPU_DEVICE_NAME_SIZE];
+    char name[GPU_DEVICE_NAME_SIZE];
 
     cuError(cuInit(0));
     cuError(cuDeviceGetCount(&deviceCount));
     fprintf(stdout, "GPU device count = %d\n", deviceCount);
 
-    for (int i = 0; i < deviceCount; ++i) {
+    for (int i = 0; i < deviceCount; ++i)
+    {
         fprintf(stdout, "\nTesting lu on GPU device %d ...\n", i);
 
         cuError(cuDeviceGet(&device, i));
@@ -269,21 +270,21 @@ int main()
         fprintf(stdout, "GPU  total Runtime: %0.6lfms\n", GET_DURING(GPU_END, GPU_START));
         fprintf(stdout, "Test lu on GPU device %d Success\n", i);
     }
-	#ifdef RUN_ON_CPU
-	  	polybench_start_instruments;
-        SET_TIME(CPU_START)
-		lu(n, POLYBENCH_ARRAY(A));        
-        SET_TIME(CPU_END)
-        fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-		compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
-	#else
-		print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
-	#endif //RUN_ON_CPU
+#ifdef RUN_ON_CPU
+    polybench_start_instruments;
+    SET_TIME(CPU_START)
+    lu(n, POLYBENCH_ARRAY(A));
+    SET_TIME(CPU_END)
+    fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
+    compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+#else
+    print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
+#endif // RUN_ON_CPU
 
-	POLYBENCH_FREE_ARRAY(A);
-	POLYBENCH_FREE_ARRAY(A_outputFromGpu);
+    POLYBENCH_FREE_ARRAY(A);
+    POLYBENCH_FREE_ARRAY(A_outputFromGpu);
 
-   	return 0;
+    return 0;
 }
 
 #include "../include/polybench.c"

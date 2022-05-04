@@ -304,8 +304,8 @@ static const char *KERNEL_PTX = ".version 6.5\n"
                                 ""
                                 "BB1_12:\n"
                                 "	ret;\n"
-                                "}\n" void
-                                init_array(int n, DATA_TYPE POLYBENCH_2D(A, N, N, n, n), DATA_TYPE POLYBENCH_1D(x1, N, n), DATA_TYPE POLYBENCH_1D(x2, N, n), DATA_TYPE POLYBENCH_1D(y1, N, n), DATA_TYPE POLYBENCH_1D(y2, N, n))
+                                "}\n";
+void init_array(int n, DATA_TYPE POLYBENCH_2D(A, N, N, n, n), DATA_TYPE POLYBENCH_1D(x1, N, n), DATA_TYPE POLYBENCH_1D(x2, N, n), DATA_TYPE POLYBENCH_1D(y1, N, n), DATA_TYPE POLYBENCH_1D(y2, N, n))
 {
     int i, j;
 
@@ -365,11 +365,11 @@ void compareResults(int n, DATA_TYPE POLYBENCH_1D(x1, N, n), DATA_TYPE POLYBENCH
     printf("Non-Matching CPU-GPU Outputs Beyond Error Threshold of %4.2f Percent: %d\n", PERCENT_DIFF_ERROR_THRESHOLD, fail);
 }
 
-void mvtCuda(CUdevice device, int n, DATA_TYPE POLYBENCH_2D(a, N, N, n, n), DATA_TYPE POLYBENCH_1D(x1, N, n), DATA_TYPE POLYBENCH_1D(x2, N, n), DATA_TYPE POLYBENCH_1D(y_1, N, n), DATA_TYPE POLYBENCH_1D(y_2, N, n), 
-			DATA_TYPE POLYBENCH_1D(x1_outputFromGpu, N, n), DATA_TYPE POLYBENCH_1D(x2_outputFromGpu, N, n))
+void mvtCuda(CUdevice device, int n, DATA_TYPE POLYBENCH_2D(a, N, N, n, n), DATA_TYPE POLYBENCH_1D(x1, N, n), DATA_TYPE POLYBENCH_1D(x2, N, n), DATA_TYPE POLYBENCH_1D(y_1, N, n), DATA_TYPE POLYBENCH_1D(y_2, N, n),
+             DATA_TYPE POLYBENCH_1D(x1_outputFromGpu, N, n), DATA_TYPE POLYBENCH_1D(x2_outputFromGpu, N, n))
 {
     CUdeviceptr a_gpu, x1_gpu, x2_gpu, y_1_gpu, y_2_gpu;
-    
+
     CUcontext context = NULL;
     CUmodule module = NULL;
     CUfunction func1 = NULL, func2 = NULL;
@@ -387,14 +387,14 @@ void mvtCuda(CUdevice device, int n, DATA_TYPE POLYBENCH_2D(a, N, N, n, n), DATA
     cuError(cuMemcpyHtoD(y_1_gpu, y_1, sizeof(DATA_TYPE) * N));
     cuError(cuMemcpyHtoD(y_2_gpu, y_2, sizeof(DATA_TYPE) * N));
 
-	cuError(cuModuleLoadData(&module, KERNEL_PTX));
+    cuError(cuModuleLoadData(&module, KERNEL_PTX));
 
     cuError(cuModuleGetFunction(&func1, module, "_Z11mvt_kernel1iPfS_S_"));
     cuError(cuModuleGetFunction(&func2, module, "_Z11mvt_kernel2iPfS_S_"));
 
-    unsigned grid_x = (size_t)ceil((float)N/ ((float)DIM_THREAD_BLOCK_X));
-    void *args1[] = {&n, &a_gpu,&x1_gpu,&y_1_gpu, NULL};
-    void *args2[] = {&n, &a_gpu,&x2_gpu,&y_2_gpu, NULL};
+    unsigned grid_x = (size_t)ceil((float)N / ((float)DIM_THREAD_BLOCK_X));
+    void *args1[] = {&n, &a_gpu, &x1_gpu, &y_1_gpu, NULL};
+    void *args2[] = {&n, &a_gpu, &x2_gpu, &y_2_gpu, NULL};
 
     SET_TIME(START)
     cuError(cuLaunchKernel(func1, grid_x, 1, 1, DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y, 1, 0, NULL, args1, NULL));
@@ -402,9 +402,9 @@ void mvtCuda(CUdevice device, int n, DATA_TYPE POLYBENCH_2D(a, N, N, n, n), DATA
     SET_TIME(END)
     fprintf(stdout, "GPU  actual Runtime: %0.6lfms\n", GET_DURING(END, START));
 
-	cuError(cuMemcpyDtoH(x1_outputFromGpu, x1_gpu, sizeof(DATA_TYPE) * N));
+    cuError(cuMemcpyDtoH(x1_outputFromGpu, x1_gpu, sizeof(DATA_TYPE) * N));
     cuError(cuMemcpyDtoH(x2_outputFromGpu, x2_gpu, sizeof(DATA_TYPE) * N));
-	
+
     cuError(cuMemFree(a_gpu));
     cuError(cuMemFree(x1_gpu));
     cuError(cuMemFree(x2_gpu));
@@ -416,28 +416,28 @@ void mvtCuda(CUdevice device, int n, DATA_TYPE POLYBENCH_2D(a, N, N, n, n), DATA
 
 int main()
 {
-	int n = N;
+    int n = N;
 
-	POLYBENCH_2D_ARRAY_DECL(a,DATA_TYPE,N,N,n,n);
-	POLYBENCH_1D_ARRAY_DECL(x1,DATA_TYPE,N,n);
-	POLYBENCH_1D_ARRAY_DECL(x2,DATA_TYPE,N,n);
-	POLYBENCH_1D_ARRAY_DECL(x1_outputFromGpu,DATA_TYPE,N,n);
-	POLYBENCH_1D_ARRAY_DECL(x2_outputFromGpu,DATA_TYPE,N,n);
-	POLYBENCH_1D_ARRAY_DECL(y_1,DATA_TYPE,N,n);
-	POLYBENCH_1D_ARRAY_DECL(y_2,DATA_TYPE,N,n);
+    POLYBENCH_2D_ARRAY_DECL(a, DATA_TYPE, N, N, n, n);
+    POLYBENCH_1D_ARRAY_DECL(x1, DATA_TYPE, N, n);
+    POLYBENCH_1D_ARRAY_DECL(x2, DATA_TYPE, N, n);
+    POLYBENCH_1D_ARRAY_DECL(x1_outputFromGpu, DATA_TYPE, N, n);
+    POLYBENCH_1D_ARRAY_DECL(x2_outputFromGpu, DATA_TYPE, N, n);
+    POLYBENCH_1D_ARRAY_DECL(y_1, DATA_TYPE, N, n);
+    POLYBENCH_1D_ARRAY_DECL(y_2, DATA_TYPE, N, n);
 
-	init_array(n, POLYBENCH_ARRAY(a), POLYBENCH_ARRAY(x1), POLYBENCH_ARRAY(x2), POLYBENCH_ARRAY(y_1), POLYBENCH_ARRAY(y_2));
-	
+    init_array(n, POLYBENCH_ARRAY(a), POLYBENCH_ARRAY(x1), POLYBENCH_ARRAY(x2), POLYBENCH_ARRAY(y_1), POLYBENCH_ARRAY(y_2));
 
     int deviceCount = 0;
     CUdevice device = 0;
-	char name[GPU_DEVICE_NAME_SIZE];
+    char name[GPU_DEVICE_NAME_SIZE];
 
     cuError(cuInit(0));
     cuError(cuDeviceGetCount(&deviceCount));
     fprintf(stdout, "GPU device count = %d\n", deviceCount);
 
-    for (int i = 0; i < deviceCount; ++i) {
+    for (int i = 0; i < deviceCount; ++i)
+    {
         fprintf(stdout, "\nTesting mvt on GPU device %d ...\n", i);
 
         cuError(cuDeviceGet(&device, i));
@@ -451,26 +451,26 @@ int main()
         fprintf(stdout, "GPU  total Runtime: %0.6lfms\n", GET_DURING(GPU_END, GPU_START));
         fprintf(stdout, "Test mvt on GPU device %d Success\n", i);
     }
-	#ifdef RUN_ON_CPU
-	  	polybench_start_instruments;
-        SET_TIME(CPU_START)
-		runMvt(n, POLYBENCH_ARRAY(a), POLYBENCH_ARRAY(x1), POLYBENCH_ARRAY(x2), POLYBENCH_ARRAY(y_1), POLYBENCH_ARRAY(y_2));
-        SET_TIME(CPU_END)
-        fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
-		compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
-	#else
-		print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
-	#endif //RUN_ON_CPU
+#ifdef RUN_ON_CPU
+    polybench_start_instruments;
+    SET_TIME(CPU_START)
+    runMvt(n, POLYBENCH_ARRAY(a), POLYBENCH_ARRAY(x1), POLYBENCH_ARRAY(x2), POLYBENCH_ARRAY(y_1), POLYBENCH_ARRAY(y_2));
+    SET_TIME(CPU_END)
+    fprintf(stdout, "CPU  total Runtime: %0.6lfms\n", GET_DURING(CPU_END, CPU_START));
+    compareResults(n, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu), POLYBENCH_ARRAY(X), POLYBENCH_ARRAY(X_outputFromGpu));
+#else
+    print_array(n, POLYBENCH_ARRAY(X_outputFromGpu));
+#endif // RUN_ON_CPU
 
-	POLYBENCH_FREE_ARRAY(a);
-	POLYBENCH_FREE_ARRAY(x1);
-	POLYBENCH_FREE_ARRAY(x2);
-	POLYBENCH_FREE_ARRAY(x1_outputFromGpu);
-	POLYBENCH_FREE_ARRAY(x2_outputFromGpu);
-	POLYBENCH_FREE_ARRAY(y_1);
-	POLYBENCH_FREE_ARRAY(y_2);
+    POLYBENCH_FREE_ARRAY(a);
+    POLYBENCH_FREE_ARRAY(x1);
+    POLYBENCH_FREE_ARRAY(x2);
+    POLYBENCH_FREE_ARRAY(x1_outputFromGpu);
+    POLYBENCH_FREE_ARRAY(x2_outputFromGpu);
+    POLYBENCH_FREE_ARRAY(y_1);
+    POLYBENCH_FREE_ARRAY(y_2);
 
-  	return 0;
+    return 0;
 }
 
 #include "../include/polybench.c"

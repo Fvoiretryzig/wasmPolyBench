@@ -3,6 +3,9 @@
         "cuda-helper.h": "c",
         "cmath": "c",
         "math.h": "c",
-        "assert.h": "c"
+        "assert.h": "c",
+        "vector": "c",
+        "xstring": "c",
+        "xutility": "c"
     }
 }
