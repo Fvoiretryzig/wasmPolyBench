@@ -632,7 +632,7 @@ void mm3Cuda(CUdevice device, int ni, int nj, int nk, int nl, int nm,
 
     cuError(cuModuleGetFunction(&func1, module, "_Z11mm3_kernel1iiiiiPfS_S_"));
     cuError(cuModuleGetFunction(&func2, module, "_Z11mm3_kernel2iiiiiPfS_S_"));
-    cuError(cuModuleGetFunction(&func2, module, "_Z11mm3_kernel3iiiiiPfS_S_"));
+    cuError(cuModuleGetFunction(&func3, module, "_Z11mm3_kernel3iiiiiPfS_S_"));
 
     unsigned grid1_x = (size_t)(ceil(((float)NJ) / ((float)DIM_THREAD_BLOCK_X)));
     unsigned grid1_y = (size_t)(ceil((float)NI / ((float)DIM_THREAD_BLOCK_Y)));
